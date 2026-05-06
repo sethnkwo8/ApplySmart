@@ -4,6 +4,7 @@ import helmet from "helmet"
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import { env } from "./config/env.js";
+import authRoutes from "./routes/auth.route.js"
 
 const app = express()
 
@@ -31,5 +32,8 @@ if (env.nodeEnv === "development") {
 
 // Rate limiter
 app.use(limiter)
+
+// Auth routes
+app.use("/auth", authRoutes)
 
 export default app
