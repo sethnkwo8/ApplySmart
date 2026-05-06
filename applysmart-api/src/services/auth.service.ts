@@ -14,7 +14,7 @@ export async function signupUser(
     // Check if user exists
     const existingUser = await User.findOne({email})
 
-    if (!existingUser) {
+    if (existingUser) {
         throw new AppError("User already exists", 400)
     }
 
@@ -29,9 +29,9 @@ export async function signupUser(
     })
 
     return {
+        id: user._id,
         name: user.name,
         email: user.email,
-        password: user.password
     }
 }
 
@@ -41,7 +41,7 @@ export async function loginUser(
     password: string
 ) {
     // Get user
-    const user = await User.findOne({email});
+    const user = await User.findOne({email: email.toLowerCase()});
 
     if (!user) {
         throw new AppError("User not found", 404)
@@ -73,7 +73,7 @@ export async function loginUser(
 }
 
 // Refresh access token function
-export function refreshAccessTokenService(refreshToken: string) {
+export function refreshTokenService(refreshToken: string) {
     if (!refreshToken) {
         throw new AppError("Unauthorized", 401)
     }

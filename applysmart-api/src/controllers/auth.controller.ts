@@ -1,6 +1,6 @@
 // Auth controllers
 import { Request, Response, NextFunction } from "express";
-import { loginUser, signupUser, refreshAccessTokenService } from "../services/auth.service.js";
+import { loginUser, signupUser, refreshTokenService } from "../services/auth.service.js";
 
 // Signup controller
 export async function signup(req: Request, res: Response, next: NextFunction) {
@@ -35,12 +35,12 @@ export async function login(req: Request, res: Response, next: NextFunction) {
 }
 
 // Refresh token controller
-export function refreshAccessToken(req: Request, res: Response, next: NextFunction) {
+export function refreshTokenController(req: Request, res: Response, next: NextFunction) {
     const {refreshToken} = req.body;
 
     try {
         // Call function
-        const {accessToken} = refreshAccessTokenService(refreshToken);
+        const {accessToken} = refreshTokenService(refreshToken);
 
         res.status(200).json({
             accessToken
