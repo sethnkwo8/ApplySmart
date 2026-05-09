@@ -4,7 +4,8 @@ import helmet from "helmet"
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import { env } from "./config/env.js";
-import authRoutes from "./routes/auth.route.js"
+import authRoutes from "./routes/auth.route.js";
+import optimizeRoutes from "./routes/optimize.routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express()
@@ -36,6 +37,9 @@ app.use(limiter)
 
 // Auth routes
 app.use("/auth", authRoutes)
+
+// Optimize routes
+app.use("/optimize", optimizeRoutes)
 
 // Error handler
 app.use(errorHandler)
