@@ -32,6 +32,8 @@ export function protect(req: AuthRequest, res: Response, next: NextFunction) {
 
         next()
     } catch(err) {
-        next(err)
+        return res.status(401).json({
+            message: "Invalid or expired token"
+        })
     }
 }
