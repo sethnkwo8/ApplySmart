@@ -1,6 +1,7 @@
 // Landing page
 import { Header } from "./Header";
 import { Hero } from "./Hero";
+import { MainTool } from "./MainTool";
 
 export function LandingPage() {
 
@@ -14,6 +15,7 @@ export function LandingPage() {
         >
         <Header />
         <Hero />
+        <MainTool />
         </div>
     )
 }
