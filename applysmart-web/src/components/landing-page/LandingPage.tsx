@@ -1,10 +1,11 @@
 // Landing page
+import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { Hero } from "./Hero";
+import { HowItWorks } from "./HowItWorks";
 import { MainTool } from "./MainTool";
 
 export function LandingPage() {
-
     return (
         <div
             className="min-h-screen bg-background text-foreground font-sans overflow-x-hidden"
@@ -16,6 +17,8 @@ export function LandingPage() {
         <Header />
         <Hero />
         <MainTool />
+        <HowItWorks />
+        <Footer />
         </div>
     )
 }
