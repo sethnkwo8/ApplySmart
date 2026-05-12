@@ -1,5 +1,6 @@
 // Landing page navbar
 import { Zap } from "lucide-react"
+import Link from "next/link"
 
 export function Header() {
     return (
@@ -21,16 +22,18 @@ export function Header() {
             </a>
             </nav>
             <div className="flex items-center gap-2">
-            <button
+            <Link
+                href="/signin"
                 className="text-sm px-4 py-2 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:border-border/60 transition-all duration-150"
             >
                 Sign in
-            </button>
-            <button
+            </Link>
+            <Link
+                href="/signup"
                 className="text-sm px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-150"
             >
                 Sign up
-            </button>
+            </Link>
             </div>
         </header>
     )
