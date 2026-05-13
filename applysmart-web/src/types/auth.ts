@@ -13,7 +13,7 @@ export interface AuthFieldProps {
     onToggleReveal?: () => void;
 }
 
-// Interface for signuu form
+// Interface for signup form
 export interface SignupFormType {
     name: string;
     email: string;
