@@ -1,7 +1,7 @@
 // Sign up form
 "use client"
 
-import { X, Zap, User, Mail, Lock, ChevronLeft } from "lucide-react";
+import { Zap, User, Mail, Lock, ChevronLeft } from "lucide-react";
 import { AuthField } from "./AuthField";
 import { useState } from "react";
 import Link from "next/link";
