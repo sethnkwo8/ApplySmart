@@ -24,7 +24,11 @@ app.set("trust proxy", 1)
 app.use(helmet())
 
 // CORS middleware
-app.use(cors())
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true
+}))
+
 app.use(express.json())
 
 // Logging
