@@ -3,18 +3,131 @@
 
 import { Zap, User, Mail, Lock, ChevronLeft } from "lucide-react";
 import { AuthField } from "./AuthField";
-import { useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { BackendError, SignupFormType } from "@/types/auth";
+import { signUpUser } from "@/lib/api/auth";
 
 export function SignUpForm() {
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirm, setConfirm] = useState("");
-    const [showPw, setShowPw] = useState(false);
-    const [showConfirm, setShowConfirm] = useState(false);
+    // Router for navigation after submit
+    const router = useRouter()
+
+    // Form data
+    const [formData, setFormData] = useState<SignupFormType>({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
+    })
+    const [showPw, setShowPw] = useState<boolean>(false);
+    const [showConfirm, setShowConfirm] = useState<boolean>(false);
+
+    // Loading state
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    
     const [errors, setErrors] = useState<Record<string, string>>({});
-    const [submitted, setSubmitted] = useState(false);
+
+    // Password requirements
+    const requirements = [
+        { label: "At least 8 characters", test: (pw: string) => pw.length >= 8 },
+        { label: "At least one number", test: (pw: string) => /\d/.test(pw) },
+        { label: "At least one symbol (@, $, !, etc.)", test: (pw: string) => /[^A-Za-z0-9]/.test(pw) },
+    ];
+
+    // Function to validata inputs
+    const validate = () => {
+        const e: Record<string, string> = {};
+        
+        // Name validation
+        if (!formData.name.trim()) e.name = "Full name is required.";
+        
+        // Email Validation
+        if (!formData.email.trim()) e.email = "Email address is required.";
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) e.email = "Enter a valid email address.";
+
+        // Password Validation
+        if (!formData.password) {
+            e.password = "Password is required.";
+        } else {
+            const failedRequirement = requirements.find(req => !req.test(formData.password));
+            if (failedRequirement) {
+                e.password = failedRequirement.label;
+            }
+        }
+
+        if (!formData.confirmPassword) {
+            e.confirmPassword = "Please confirm your password.";
+        } else if (formData.confirmPassword !== formData.password) e.confirmPassword = "Passwords do not match.";
+
+        return e;
+    };
+
+    // Function to handle change
+    function handleChange(e:React.ChangeEvent<HTMLInputElement>) {
+        const { name, value } = e.target;
+
+        // Update form data
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }))
+
+        // Clear error while typing
+        if (errors[name]) {
+            setErrors(prev => {
+                const newErrors = {...prev};
+                delete newErrors[name]
+                return newErrors
+            })
+        }
+    }
+
+    // Function to handle form submit
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        // Validate errors
+        const validationErrors = validate();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
+        // Set loading state
+        setIsLoading(true)
+
+        // Clear error messages
+        setErrors({})
+
+        try{
+            // API call
+            await signUpUser(formData);
+            
+            // Navigate to sign in page
+            router.push("/signin")
+        } catch (err) {
+            // Cast err to interface
+            const serverError = err as BackendError;
+
+            if (serverError.errors && Array.isArray(serverError.errors)) {
+                const backendErrors: Record<string, string> = {};
+                
+                serverError.errors.forEach((obj) => {
+                    backendErrors[obj.path] = obj.message;
+                });
+
+                setErrors(backendErrors);
+            } else {
+                setErrors({ 
+                    server: serverError.message || "An unexpected error occurred" 
+                });
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     return (
         <div className="p-7">
             {/* Header */}
@@ -58,14 +171,15 @@ export function SignUpForm() {
             </div>
 
             {/* Form */}
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
                 {/* Name field */}
                 <AuthField
                     label="Full name"
                     type="text"
                     placeholder="Jane Smith"
-                    value={name}
-                    onChange={(v) => { setName(v); setErrors((e) => ({ ...e, name: "" })); }}
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
                     error={errors.name}
                     icon={User}
                 />
@@ -74,8 +188,9 @@ export function SignUpForm() {
                 label="Email address"
                 type="email"
                 placeholder="jane@example.com"
-                value={email}
-                onChange={(v) => { setEmail(v); setErrors((e) => ({ ...e, email: "" })); }}
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 error={errors.email}
                 icon={Mail}
                 />
@@ -84,29 +199,50 @@ export function SignUpForm() {
                 label="Password"
                 type="password"
                 placeholder="Min. 8 characters"
-                value={password}
-                onChange={(v) => { setPassword(v); setErrors((e) => ({ ...e, password: "" })); }}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                error={errors.password}
                 icon={Lock}
                 reveal={showPw}
                 onToggleReveal={() => setShowPw((s) => !s)}
                 />
+                <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-2 px-1">
+                    {requirements.map((req, i) => (
+                        <div key={i} className="flex items-center gap-1.5">
+                            <div className={`w-1 h-1 rounded-full ${req.test(formData.password) ? 'bg-primary' : 'bg-muted'}`} />
+                            <span className={`text-[10px] uppercase tracking-tighter transition-colors duration-300 ${
+                                req.test(formData.password) ? 'text-primary/90' : 'text-muted-foreground'
+                            }`}>
+                                {req.label}
+                            </span>
+                        </div>
+                    ))}
+                </div>
                 {/* Confirm password field */}
                 <AuthField
                     label="Confirm password"
                     type="password"
                     placeholder="Repeat password"
-                    value={confirm}
-                    onChange={(v) => { setConfirm(v); setErrors((e) => ({ ...e, confirm: "" })); }}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    error={errors.confirmPassword}
                     icon={Lock}
                     reveal={showConfirm}
                     onToggleReveal={() => setShowConfirm((s) => !s)}
                 />
+                {errors.server && (
+                    <p className="text-xs text-rose-400 text-center mb-2 animate-in fade-in slide-in-from-top-1">
+                        {errors.server}
+                    </p>
+                )}
                 {/* Submit button */}
                 <button
                 type="submit"
                 className="w-full py-3.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-all duration-150 shadow-[0_0_24px_rgba(170,255,85,0.15)] mt-1"
                 >
-                Create my account
+                {isLoading ? "Creating account..." : "Create my account"}
                 </button>
             </form>
 
