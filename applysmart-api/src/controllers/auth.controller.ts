@@ -4,10 +4,10 @@ import { loginUser, signupUser, refreshTokenService } from "../services/auth.ser
 
 // Signup controller
 export async function signup(req: Request, res: Response, next: NextFunction) {
-    const {name, email, password, confirmPassword} = req.body;
+    const {name, email, password} = req.body;
 
     try {
-        const user = await signupUser(name, email, password, confirmPassword);
+        const user = await signupUser(name, email, password);
         res.status(201).json({
             message: "User created",
             user
