@@ -27,13 +27,6 @@ export function SignInForm() {
     const [showPw, setShowPw] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
-    // Password requirements
-    const requirements = [
-        { label: "At least 8 characters", test: (pw: string) => pw.length >= 8 },
-        { label: "At least one number", test: (pw: string) => /\d/.test(pw) },
-        { label: "At least one symbol (@, $, !, etc.)", test: (pw: string) => /[^A-Za-z0-9]/.test(pw) },
-    ];
-
     // Function to validata inputs
     const validate = () => {
         const e: Record<string, string> = {};
@@ -45,12 +38,7 @@ export function SignInForm() {
         // Password Validation
         if (!formData.password) {
             e.password = "Password is required.";
-        } else {
-            const failedRequirement = requirements.find(req => !req.test(formData.password));
-            if (failedRequirement) {
-                e.password = failedRequirement.label;
-            }
-        }
+        } 
 
         return e;
     };
@@ -179,7 +167,7 @@ export function SignInForm() {
                 <AuthField
                 label="Password"
                 type="password"
-                placeholder="Min. 8 characters"
+                placeholder="Enter your password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}

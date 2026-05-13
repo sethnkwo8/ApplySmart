@@ -44,14 +44,14 @@ export async function loginUser(
     const user = await User.findOne({email: email.toLowerCase()});
 
     if (!user) {
-        throw new AppError("User not found", 404)
+        throw new AppError("Invalid email or password", 401)
     }
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.password)
 
     if (!isMatch) {
-        throw new AppError("Incorrect password", 401)
+        throw new AppError("Invalid email or password", 401)
     }
 
     const accessToken = jwt.sign(
