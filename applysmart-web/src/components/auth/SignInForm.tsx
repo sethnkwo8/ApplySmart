@@ -5,13 +5,120 @@ import { useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, Zap, Mail, Lock } from "lucide-react";
 import { AuthField } from "./AuthField";
+import { SigninFormType } from "@/types/auth";
+import { useRouter } from "next/navigation";
+import { signInUser } from "@/lib/api/auth";
+import { toast } from "sonner";
+import { BackendError } from "@/types/auth";
 
 export function SignInForm() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    // Router for navigation after submit
+    const router = useRouter()
+
+    // Form data
+    const [formData, setFormData] = useState<SigninFormType>({
+        email: "",
+        password: ""
+    })
+
+    // Loading state
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+
     const [showPw, setShowPw] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
-    const [submitted, setSubmitted] = useState(false);
+
+    // Password requirements
+    const requirements = [
+        { label: "At least 8 characters", test: (pw: string) => pw.length >= 8 },
+        { label: "At least one number", test: (pw: string) => /\d/.test(pw) },
+        { label: "At least one symbol (@, $, !, etc.)", test: (pw: string) => /[^A-Za-z0-9]/.test(pw) },
+    ];
+
+    // Function to validata inputs
+    const validate = () => {
+        const e: Record<string, string> = {};
+        
+        // Email Validation
+        if (!formData.email.trim()) e.email = "Email address is required.";
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) e.email = "Enter a valid email address.";
+
+        // Password Validation
+        if (!formData.password) {
+            e.password = "Password is required.";
+        } else {
+            const failedRequirement = requirements.find(req => !req.test(formData.password));
+            if (failedRequirement) {
+                e.password = failedRequirement.label;
+            }
+        }
+
+        return e;
+    };
+
+    // Function to handle change
+    function handleChange(e:React.ChangeEvent<HTMLInputElement>) {
+        const { name, value } = e.target;
+
+        // Update form data
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }))
+
+        // Clear error while typing
+        if (errors[name]) {
+            setErrors(prev => {
+                const newErrors = {...prev};
+                delete newErrors[name]
+                return newErrors
+            })
+        }
+    }
+
+    // Function to handle form submit
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        // Validate errors
+        const validationErrors = validate();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
+        // Set loading state
+        setIsLoading(true)
+
+        // Clear error messages
+        setErrors({})
+
+        try{
+            // API call
+            const data = await signInUser(formData);
+
+            // Toast success notification
+            toast.success(`Welcome back, ${data.user.name}!`);
+
+            // Navigate to sign in page
+            router.push("/")
+        } catch (err) {
+            const serverError = err as BackendError;
+            
+            if (serverError.message === "Invalid email or password") {
+                setErrors({ 
+                    email: " ", // Highlight the boxes
+                    password: " ", 
+                    server: "Invalid email or password. Please try again." 
+                });
+            } else {
+                setErrors({ 
+                    server: serverError.message || "An unexpected error occurred" 
+                });
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     return (
         <div className="p-7">
@@ -56,14 +163,15 @@ export function SignInForm() {
             </div>
 
             {/* Form */}
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
                 {/* Email field */}
                 <AuthField
                 label="Email address"
                 type="email"
                 placeholder="jane@example.com"
-                value={email}
-                onChange={(v) => { setEmail(v); setErrors((e) => ({ ...e, email: "" })); }}
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 error={errors.email}
                 icon={Mail}
                 />
@@ -72,8 +180,10 @@ export function SignInForm() {
                 label="Password"
                 type="password"
                 placeholder="Min. 8 characters"
-                value={password}
-                onChange={(v) => { setPassword(v); setErrors((e) => ({ ...e, password: "" })); }}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                error={errors.password}
                 icon={Lock}
                 reveal={showPw}
                 onToggleReveal={() => setShowPw((s) => !s)}
@@ -87,12 +197,17 @@ export function SignInForm() {
                     Forgot password?
                     </button>
                 </div>
+                {errors.server && (
+                    <p className="text-xs text-rose-400 text-center mb-2 animate-in fade-in slide-in-from-top-1">
+                        {errors.server}
+                    </p>
+                )}
                 {/* Submit button */}
                 <button
                     type="submit"
                     className="w-full py-3.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-all duration-150 shadow-[0_0_24px_rgba(170,255,85,0.15)] mt-1"
                     >
-                    Sign in to ApplySmart
+                    {isLoading ? "Signing in..." : "Sign in to ApplySmart"}
                 </button>
             </form>
 
