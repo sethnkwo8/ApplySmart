@@ -1,12 +1,14 @@
 import { Mail } from "lucide-react";
+import { ChangeEvent } from "react";
 
 // Auth field props interface
 export interface AuthFieldProps {
     label: string;
     type: string;
     placeholder: string;
+    name:string;
     value: string;
-    onChange: (v: string) => void;
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void;
     error?: string;
     icon: typeof Mail;
     reveal?: boolean;
