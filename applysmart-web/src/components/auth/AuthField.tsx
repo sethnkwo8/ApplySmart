@@ -7,6 +7,7 @@ export function AuthField({
     label,
     type,
     placeholder,
+    name,
     value,
     onChange,
     error,
@@ -30,8 +31,9 @@ export function AuthField({
             <input
             type={inputType}
             placeholder={placeholder}
+            name={name}
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={onChange}
             className={`w-full bg-muted/60 border rounded-xl pl-10 ${
             isPassword ? "pr-10" : "pr-4"
             } py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none transition-colors duration-150 ${
