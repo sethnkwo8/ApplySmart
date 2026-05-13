@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BackendError, SignupFormType } from "@/types/auth";
 import { signUpUser } from "@/lib/api/auth";
+import { toast } from "sonner";
 
 export function SignUpForm() {
     // Router for navigation after submit
@@ -103,7 +104,10 @@ export function SignUpForm() {
         try{
             // API call
             await signUpUser(formData);
-            
+
+            // Toast success notification
+            toast.success("Account created successfully!"); 
+
             // Navigate to sign in page
             router.push("/signin")
         } catch (err) {
