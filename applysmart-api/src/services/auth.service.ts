@@ -68,7 +68,8 @@ export async function loginUser(
 
     return {
         accessToken,
-        refreshToken
+        refreshToken,
+        user: { name: user.name, email: user.email }
     }
 }
 
