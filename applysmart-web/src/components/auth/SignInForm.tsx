@@ -7,12 +7,9 @@ import { ChevronLeft, Zap, Mail, Lock } from "lucide-react";
 import { AuthField } from "./AuthField";
 
 export function SignInForm() {
-    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [confirm, setConfirm] = useState("");
     const [showPw, setShowPw] = useState(false);
-    const [showConfirm, setShowConfirm] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [submitted, setSubmitted] = useState(false);
 
