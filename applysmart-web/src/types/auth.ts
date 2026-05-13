@@ -22,3 +22,9 @@ export interface SignupFormType {
     password: string;
     confirmPassword: string;
 }
+
+// Interface for errors from backend
+export interface BackendError {
+    errors?: { path: string; message: string }[];
+    message?: string;
+}
