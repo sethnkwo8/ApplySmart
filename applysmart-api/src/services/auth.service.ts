@@ -9,13 +9,19 @@ import jwt from "jsonwebtoken";
 export async function signupUser(
     name: string, 
     email: string, 
-    password: string
+    password: string,
+    confirmPassword: string
 ) {
     // Check if user exists
     const existingUser = await User.findOne({email})
 
     if (existingUser) {
         throw new AppError("User already exists", 400)
+    }
+
+    // Confirm password
+    if (confirmPassword !== password) {
+        throw new AppError("Passwords don't match", 400)
     }
 
     // Hash password
