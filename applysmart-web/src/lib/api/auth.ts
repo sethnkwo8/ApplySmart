@@ -15,7 +15,7 @@ export async function signUpUser(formData: SignupFormType) {
 
     if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.message || "Registration Failed")
+        throw errorData
     }
 
     return await res.json()
