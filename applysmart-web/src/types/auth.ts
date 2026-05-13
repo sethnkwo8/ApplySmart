@@ -23,6 +23,12 @@ export interface SignupFormType {
     confirmPassword: string;
 }
 
+// Interface for sign in form
+export interface SigninFormType {
+    email: string;
+    password: string;
+}
+
 // Interface for errors from backend
 export interface BackendError {
     errors?: { path: string; message: string }[];
