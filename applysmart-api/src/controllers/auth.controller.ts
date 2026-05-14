@@ -58,3 +58,23 @@ export function refreshTokenController(req: Request, res: Response, next: NextFu
         next(err)
     }
 }
+
+// Logout user controller
+export async function logout(req: Request, res: Response, next: NextFunction) {
+    try{
+        res
+        .clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: env.nodeEnv === "production",
+            sameSite: "lax",
+            path: "/"
+        })
+        .status(200)
+        .json({
+            success: true,
+            message: "Logged out successfully"
+        })
+    } catch(err) {
+        next(err)
+    }
+}
