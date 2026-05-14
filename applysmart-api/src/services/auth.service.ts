@@ -97,3 +97,31 @@ export function refreshTokenService(refreshToken: string) {
         throw new AppError("Invalid or expired refresh token", 403)
     }
 }
+
+// Get user details function
+export async function getUser(refreshToken: string) {
+    if (!refreshToken) {
+        throw new AppError("Unauthorized", 401)
+    }
+
+    try{
+        // Verify refresh token
+        const decoded = jwt.verify(refreshToken, env.jwtRefreshSecret) as {userId: string};
+
+        const {userId} = decoded;
+
+        // Get user
+        const user = await User.findById(userId)
+
+        if (!user) {
+            throw new AppError("User no longer exists", 401);
+        }
+
+        return {
+            name: user.name,
+            email: user.email
+        }
+    } catch(err) {
+        throw new AppError("Unauthorized", 401)
+    }
+}

@@ -1,6 +1,6 @@
 // Auth controllers
 import { Request, Response, NextFunction } from "express";
-import { loginUser, signupUser, refreshTokenService } from "../services/auth.service.js";
+import { loginUser, signupUser, refreshTokenService, getUser } from "../services/auth.service.js";
 import { env } from "../config/env.js";
 
 // Signup controller
@@ -73,6 +73,21 @@ export async function logout(req: Request, res: Response, next: NextFunction) {
         .json({
             success: true,
             message: "Logged out successfully"
+        })
+    } catch(err) {
+        next(err)
+    }
+}
+
+// Get user controller
+export async function me(req: Request, res: Response, next: NextFunction) {
+    const {refreshToken} = req.cookies;
+
+    try {
+        const user = await getUser(refreshToken);
+
+        res.status(200).json({
+            user
         })
     } catch(err) {
         next(err)
