@@ -118,6 +118,7 @@ export async function getUser(refreshToken: string) {
         }
 
         return {
+            id: user._id,
             name: user.name,
             email: user.email
         }
