@@ -1,6 +1,7 @@
 // Auth controllers
 import { Request, Response, NextFunction } from "express";
 import { loginUser, signupUser, refreshTokenService } from "../services/auth.service.js";
+import { env } from "../config/env.js";
 
 // Signup controller
 export async function signup(req: Request, res: Response, next: NextFunction) {
@@ -23,11 +24,19 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     const {email, password} = req.body;
 
     try {
-        const {accessToken, refreshToken} = await loginUser(email, password);
+        const {accessToken, refreshToken, user} = await loginUser(email, password);
 
-        res.status(200).json({
+        res
+        .cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: env.nodeEnv === "production",
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: "/"
+        })
+        .status(200).json({
             accessToken,
-            refreshToken
+            user
         })
     } catch(err) {
         next(err)
