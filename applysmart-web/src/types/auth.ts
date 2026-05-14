@@ -34,3 +34,19 @@ export interface BackendError {
     errors?: { path: string; message: string }[];
     message?: string;
 }
+
+// User interface for zustand
+export interface User {
+    id: string;
+    name: string;
+    email: string;
+}
+
+// Auth state interface for zustand
+export interface AuthState {
+    user: User | null;
+    isLoading: boolean;
+    login: (formData: SigninFormType) => Promise<void>
+    checkAuth: () => Promise<void>;
+    logout: () => Promise<void>;
+}
