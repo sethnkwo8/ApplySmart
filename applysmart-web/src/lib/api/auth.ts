@@ -1,6 +1,7 @@
 // API for auth routes
 import { SigninFormType, SignupFormType } from "@/types/auth";
 
+// Sign up user api function
 export async function signUpUser(formData: SignupFormType) {
     const {confirmPassword, ...signUpData} = formData
     const apiURL = process.env.NEXT_PUBLIC_API_URL;
@@ -21,6 +22,7 @@ export async function signUpUser(formData: SignupFormType) {
     return await res.json()
 }
 
+// Sign in user api function
 export async function signInUser(formData: SigninFormType) {
     const apiURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -35,6 +37,40 @@ export async function signInUser(formData: SigninFormType) {
 
     if (!res.ok) {
         const errorData = await res.json();
+        throw errorData
+    }
+
+    return await res.json()
+}
+
+// Get user api function
+export async function getUser() {
+    const apiURL = process.env.NEXT_PUBLIC_API_URL;
+
+    const res = await fetch(`${apiURL}/auth/me`, {
+        method: "GET",
+        credentials: "include"
+    })
+
+    if (!res.ok) {
+        const errorData = await res.json()
+        throw errorData
+    }
+
+    return await res.json()
+}
+
+// Logout user api function
+export async function logoutUser() {
+    const apiURL = process.env.NEXT_PUBLIC_API_URL;
+
+    const res = await fetch(`${apiURL}/auth/logout`, {
+        method: "POST",
+        credentials: "include"
+    })
+
+    if (!res.ok) {
+        const errorData = await res.json()
         throw errorData
     }
 
