@@ -26,6 +26,7 @@ export async function signInUser(formData: SigninFormType) {
 
     const res = await fetch(`${apiURL}/auth/login`, {
         method: "POST",
+        credentials: "include",
         headers: {
             "Content-Type": "application/json"
         },
