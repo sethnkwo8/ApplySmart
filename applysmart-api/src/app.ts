@@ -7,6 +7,7 @@ import { env } from "./config/env.js";
 import authRoutes from "./routes/auth.route.js";
 import optimizeRoutes from "./routes/optimize.routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
+import cookieParser from "cookie-parser";
 
 const app = express()
 
@@ -28,6 +29,9 @@ app.use(cors({
     origin: "http://localhost:3000",
     credentials: true
 }))
+
+// Cookie parser for reading cookies
+app.use(cookieParser())
 
 app.use(express.json())
 
