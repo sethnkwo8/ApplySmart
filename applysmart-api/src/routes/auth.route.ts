@@ -15,6 +15,6 @@ router.post("/login", validate(loginSchema), login)
 router.post("/token", validate(refreshSchema), refreshTokenController)
 
 // Logout route
-router.post("logout", logout)
+router.post("/logout", logout)
 
 export default router
