@@ -12,7 +12,7 @@ router.post("/signup", validate(signUpSchema), signup)
 router.post("/login", validate(loginSchema), login)
 
 // Refresh access token route
-router.post("/token", validate(refreshSchema), refreshTokenController)
+router.post("/refresh", validate(refreshSchema), refreshTokenController)
 
 // Logout route
 router.post("/logout", logout)
