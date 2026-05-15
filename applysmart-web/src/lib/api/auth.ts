@@ -14,12 +14,13 @@ export async function signUpUser(formData: SignupFormType) {
         body: JSON.stringify(signUpData)
     })
 
+    const data = await res.json();
+
     if (!res.ok) {
-        const errorData = await res.json();
-        throw errorData
+        throw data
     }
 
-    return await res.json()
+    return data
 }
 
 // Sign in user api function
@@ -35,12 +36,13 @@ export async function signInUser(formData: SigninFormType) {
         body: JSON.stringify(formData)
     })
 
+    const data = await res.json();
+
     if (!res.ok) {
-        const errorData = await res.json();
-        throw errorData
+        throw data
     }
 
-    return await res.json()
+    return data
 }
 
 // Get user api function
@@ -52,12 +54,13 @@ export async function getUser() {
         credentials: "include"
     })
 
+    const data = await res.json();
+
     if (!res.ok) {
-        const errorData = await res.json()
-        throw errorData
+        throw data
     }
 
-    return await res.json()
+    return data
 }
 
 // Logout user api function
@@ -69,10 +72,32 @@ export async function logoutUser() {
         credentials: "include"
     })
 
+    const data = await res.json();
+
     if (!res.ok) {
-        const errorData = await res.json()
-        throw errorData
+        throw data
     }
 
-    return await res.json()
+    return data
+}
+
+// Refresh token api function
+export async function refreshToken() {
+    const apiURL = process.env.NEXT_PUBLIC_API_URL;
+
+    const res = await fetch(`${apiURL}/auth/refresh`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json"
+        },
+    })
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        throw data
+    }
+
+    return data
 }
