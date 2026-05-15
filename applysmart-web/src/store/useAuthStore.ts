@@ -16,6 +16,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         try {
             const data = await signInUser(formData);
             set({user: data.user, accessToken: data.accessToken, isLoading: false}); // set user to signed in user and loading state to false
+            return data.user; // Return data for toast success
         } catch(err) {
             set({isLoading: false});
             throw err;
