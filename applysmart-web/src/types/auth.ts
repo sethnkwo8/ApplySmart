@@ -48,7 +48,8 @@ export interface AuthState {
     accessToken: string | null;
     isLoading: boolean;
     login: (formData: SigninFormType) => Promise<void>
-    setUser: (user: User) => void;
+    setUser: (user: User | null) => void;
+    refresh: () => Promise<void>;
     checkAuth: () => Promise<void>;
     logout: () => Promise<void>;
 }
