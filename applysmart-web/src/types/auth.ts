@@ -45,8 +45,10 @@ export interface User {
 // Auth state interface for zustand
 export interface AuthState {
     user: User | null;
+    accessToken: string | null;
     isLoading: boolean;
     login: (formData: SigninFormType) => Promise<void>
+    setUser: (user: User) => void;
     checkAuth: () => Promise<void>;
     logout: () => Promise<void>;
 }
