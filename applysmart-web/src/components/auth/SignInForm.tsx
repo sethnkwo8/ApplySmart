@@ -10,10 +10,14 @@ import { useRouter } from "next/navigation";
 import { signInUser } from "@/lib/api/auth";
 import { toast } from "sonner";
 import { BackendError } from "@/types/auth";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export function SignInForm() {
     // Router for navigation after submit
     const router = useRouter()
+
+    // Get sign in action from auth store
+    const {login} = useAuthStore()
 
     // Form data
     const [formData, setFormData] = useState<SigninFormType>({
@@ -82,10 +86,12 @@ export function SignInForm() {
 
         try{
             // API call
-            const data = await signInUser(formData);
+            const data = await login(formData);
+
+            const name = data.name;
 
             // Toast success notification
-            toast.success(`Welcome back, ${data.user.name}!`);
+            toast.success(`Welcome back, ${name}!`);
 
             // Navigate to sign in page
             router.push("/")
