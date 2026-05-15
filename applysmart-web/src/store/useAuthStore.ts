@@ -1,6 +1,6 @@
 // Auth Zustand store file
 import { create } from "zustand";
-import { getUser, signInUser, logoutUser } from "@/lib/api/auth";
+import { getUser, signInUser, logoutUser, refreshToken } from "@/lib/api/auth";
 import { AuthState } from "@/types/auth";
 
 // Initialize the store
@@ -21,29 +21,45 @@ export const useAuthStore = create<AuthState>((set) => ({
             throw err;
         }
     },
-
+    // Set user action
     setUser: (user) => (set({user})),
+
+    // Refresh access token action
+    refresh: async() => {
+        try{
+            const data = await refreshToken();
+            // Set access token and user
+            set({
+                accessToken: data.accessToken,
+                user: data.user
+            })
+        } catch(err) {
+            set({user: null, accessToken: null})
+        }
+    },
 
     // Check auth action
     checkAuth: async() => {
         // Set loading state to true
         set({isLoading: true})
         try{
-            const data = await getUser(); // Get user data
-            set({user: data.user, isLoading: false}) // Set user data and loading state to false
+            const data = await refreshToken(); // Get user data
+            set({user: data.user, accessToken: data.accessToken, isLoading: false}) // Set user data and loading state to false
         } catch(err) {
-            set({user: null, isLoading: false}) // Set user data to null and loading state to false
+            set({user: null, accessToken: null, isLoading: false}) // Set user data to null and loading state to false
         }
     },
 
     // Logout user action
     logout: async() => {
         // Set loading state to true
+        set({isLoading: true})
         try{
             await logoutUser();
-            set({user: null, accessToken: null}) // Set user to null
+            set({user: null, accessToken: null, isLoading: false}) // Set user to null
         } catch(err) {
             console.error("Logout failed:", err)
+            set({ user: null, accessToken: null, isLoading: false });
         }
     }
 }))
