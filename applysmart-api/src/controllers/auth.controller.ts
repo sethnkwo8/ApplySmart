@@ -44,15 +44,16 @@ export async function login(req: Request, res: Response, next: NextFunction) {
 }
 
 // Refresh token controller
-export function refreshTokenController(req: Request, res: Response, next: NextFunction) {
-    const {refreshToken} = req.body;
+export async function refreshTokenController(req: Request, res: Response, next: NextFunction) {
+    const {refreshToken} = req.cookies;
 
     try {
         // Call function
-        const {accessToken} = refreshTokenService(refreshToken);
+        const {accessToken, user} = await refreshTokenService(refreshToken);
 
         res.status(200).json({
-            accessToken
+            accessToken,
+            user
         })
     } catch (err) {
         next(err)

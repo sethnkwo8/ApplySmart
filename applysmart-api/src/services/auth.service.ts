@@ -74,7 +74,7 @@ export async function loginUser(
 }
 
 // Refresh access token function
-export function refreshTokenService(refreshToken: string) {
+export async function refreshTokenService(refreshToken: string) {
     if (!refreshToken) {
         throw new AppError("Unauthorized", 401)
     }
@@ -84,6 +84,12 @@ export function refreshTokenService(refreshToken: string) {
 
         const {userId} = decoded;
 
+        const user = await User.findById(userId)
+
+        if (!user) {
+            throw new AppError("User no longer exists", 401);
+        }
+
         const accessToken = jwt.sign(
             {userId},
             env.jwtSecret,
@@ -91,7 +97,12 @@ export function refreshTokenService(refreshToken: string) {
         )
 
         return {
-            accessToken
+            accessToken,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email
+            }
         }
     } catch (err) {
         throw new AppError("Invalid or expired refresh token", 403)
