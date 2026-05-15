@@ -1,6 +1,6 @@
 import express from "express"
 import { validate } from "../middleware/validator.js";
-import { signUpSchema, loginSchema, refreshSchema } from "../validators/auth.validator.js";
+import { signUpSchema, loginSchema } from "../validators/auth.validator.js";
 import { login, signup, refreshTokenController, logout, me } from "../controllers/auth.controller.js";
 
 const router = express.Router();
@@ -12,7 +12,7 @@ router.post("/signup", validate(signUpSchema), signup)
 router.post("/login", validate(loginSchema), login)
 
 // Refresh access token route
-router.post("/refresh", validate(refreshSchema), refreshTokenController)
+router.post("/refresh", refreshTokenController)
 
 // Logout route
 router.post("/logout", logout)
