@@ -1,6 +1,8 @@
+// Root Layout
 import type { Metadata } from "next";
 import { Toaster } from "sonner";
 import "./globals.css";
+import AuthProvider from "@/components/providers/AuthProvider";
 
 export const metadata: Metadata = {
   title: "ApplySmart - AI Resume & ATS Optimization Tool",
@@ -16,8 +18,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <main>{children}</main>
-        <Toaster position="bottom-right" richColors theme="dark" />
+        <AuthProvider>
+          <main>{children}</main>
+          <Toaster position="bottom-right" richColors theme="dark" />
+        </AuthProvider>
       </body>
     </html>
   );
