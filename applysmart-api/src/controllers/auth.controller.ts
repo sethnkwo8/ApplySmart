@@ -1,6 +1,6 @@
 // Auth controllers
 import { Request, Response, NextFunction } from "express";
-import { loginUser, signupUser, refreshTokenService, getUser } from "../services/auth.service.js";
+import { loginUser, signupUser, refreshTokenService, getUser, googleAuthService } from "../services/auth.service.js";
 import { env } from "../config/env.js";
 
 // Signup controller
@@ -88,6 +88,30 @@ export async function me(req: Request, res: Response, next: NextFunction) {
         const user = await getUser(refreshToken);
 
         res.status(200).json({
+            user
+        })
+    } catch(err) {
+        next(err)
+    }
+}
+
+// Google Auth controller
+export async function googleLogin(req: Request, res: Response, next: NextFunction) {
+    const {idToken} = req.body // Sent from frontend
+
+    try {
+        const {accessToken, refreshToken, user} = await googleAuthService(idToken)
+
+        res
+        .cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: env.nodeEnv === "production",
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: "/"
+        })
+        .status(200).json({
+            accessToken,
             user
         })
     } catch(err) {
