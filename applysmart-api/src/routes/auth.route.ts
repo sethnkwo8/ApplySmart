@@ -1,7 +1,7 @@
 import express from "express"
 import { validate } from "../middleware/validator.js";
 import { signUpSchema, loginSchema } from "../validators/auth.validator.js";
-import { login, signup, refreshTokenController, logout, me } from "../controllers/auth.controller.js";
+import { login, signup, refreshTokenController, logout, me, googleLogin } from "../controllers/auth.controller.js";
 
 const router = express.Router();
 
@@ -19,5 +19,8 @@ router.post("/logout", logout)
 
 // GET user route
 router.get("/me", me)
+
+// Google login route
+router.post("/google", googleLogin)
 
 export default router
