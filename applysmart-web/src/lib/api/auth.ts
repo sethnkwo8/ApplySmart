@@ -98,3 +98,25 @@ export async function refreshToken() {
 
     return data
 }
+
+// Google auth login api function
+export async function googleLogin(idToken: string) {
+    const apiURL = process.env.NEXT_PUBLIC_API_URL;
+
+    const res = await fetch(`${apiURL}/auth/google`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({idToken})
+    })
+
+    const data = await res.json()
+
+    if (!res.ok) {
+        throw data
+    }
+
+    return data
+}
