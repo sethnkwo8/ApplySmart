@@ -178,7 +178,13 @@ export async function googleAuthService(idToken: string) {
         throw new AppError("Invalid Google token payload structural data", 401)
     }
 
-    const {name, email, sub: googleId} = payload;
+    const {name, email, email_verified, sub: googleId} = payload;
+
+    // Verify email
+    if (!email_verified) {
+        throw new AppError("Email not verified", 401);
+    }
+
     const lowerEmail = email.toLowerCase()
 
     // Check if user exists
