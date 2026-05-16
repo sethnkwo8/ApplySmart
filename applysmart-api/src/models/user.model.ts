@@ -1,9 +1,16 @@
 import mongoose, {Schema, Document} from "mongoose";
 
+export const Providers = [
+    "local", "google"
+] as const;
+
+export type ProviderName = typeof Providers[number];
 export interface IUser extends Document {
     name: string;
     email: string;
-    password: string;
+    provider: ProviderName;
+    googleId?: string;
+    password?: string;
 }
 
 const userSchema = new Schema<IUser> ({
@@ -16,8 +23,19 @@ const userSchema = new Schema<IUser> ({
         type: String,
         unique: true
     },
+    provider: {
+        type: String,
+        enum: Providers,
+        required: true
+    },
+    googleId: {
+        type: String,
+        required: false,
+        unique:true,
+        sparse: true // tells MongoDB to ignore missing or null values when enforcing uniqueness
+    },
     password: {
-        required: true,
+        required: false,
         type: String
     }
 }, {
