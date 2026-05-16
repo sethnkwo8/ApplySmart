@@ -58,7 +58,7 @@ export async function loginUser(
             "This account uses Google Sign-In. Please log in with Google.", 
             400
         );
-    };
+    }
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.password)
@@ -153,5 +153,73 @@ export async function getUser(refreshToken: string) {
 
 // Google auth service function
 export async function googleAuthService(idToken: string) {
-    
+    if (!idToken) {
+        throw new AppError("Google token is required", 400);
+    }
+
+    let payload;
+
+    try{
+        // Verify Google token payload
+        const ticket = await client.verifyIdToken({
+            idToken,
+            audience: env.googleClientId
+        });
+
+        // Set payload gotten from client
+        payload = ticket.getPayload();
+
+    } catch (err) {
+        throw new AppError("Invalid Google token verification failed", 401);
+    }
+
+    // Throw AppError if payload data invalid
+    if (!payload || !payload.email || !payload.sub) {
+        throw new AppError("Invalid Google token payload structural data", 401)
+    }
+
+    const {name, email, sub: googleId} = payload;
+    const lowerEmail = email.toLowerCase()
+
+    // Check if user exists
+    let user = await User.findOne({email: lowerEmail})
+
+    if (user) {
+        // If user already signed up with local route but now uses Google
+        if (!user.googleId) {
+            user.googleId = googleId;
+            user.provider = "google";
+
+            // Save user details
+            await user.save()
+        }
+    } else {
+        // New user signing in with Google auth
+        user = await User.create({
+            name: name || "Google User",
+            email: lowerEmail,
+            provider: "google",
+            googleId
+        })
+    }
+
+    // Generate access token
+    const accessToken = jwt.sign(
+        {userId: user._id},
+        env.jwtSecret,
+        {expiresIn: "15m"}
+    )
+
+    // Generate refresh token
+    const refreshToken = jwt.sign(
+        { userId: user._id },
+        env.jwtRefreshSecret,
+        { expiresIn: "7d" }
+    );
+
+    return {
+        accessToken,
+        refreshToken,
+        user: {id: user._id, name: user.name, email: user.email}
+    }
 }
