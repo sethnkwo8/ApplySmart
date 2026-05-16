@@ -4,6 +4,10 @@ import { User } from "../models/user.model.js";
 import { AppError } from "../utils/AppError.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { OAuth2Client } from "google-auth-library";
+
+// Initialize Google OAuth Client
+const client = new OAuth2Client(env.googleClientId);
 
 // Signup user function
 export async function signupUser(
@@ -25,7 +29,8 @@ export async function signupUser(
     const user = await User.create({
         name,
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        provider: "local"
     })
 
     return {
@@ -46,6 +51,14 @@ export async function loginUser(
     if (!user) {
         throw new AppError("Invalid email or password", 401)
     }
+
+    // If the user signed up via Google and has no password set
+    if (!user.password) {
+        throw new AppError(
+            "This account uses Google Sign-In. Please log in with Google.", 
+            400
+        );
+    };
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.password)
@@ -136,4 +149,9 @@ export async function getUser(refreshToken: string) {
     } catch(err) {
         throw new AppError("Unauthorized", 401)
     }
+}
+
+// Google auth service function
+export async function googleAuthService(idToken: string) {
+    
 }
