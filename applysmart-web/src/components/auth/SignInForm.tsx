@@ -7,17 +7,17 @@ import { ChevronLeft, Zap, Mail, Lock } from "lucide-react";
 import { AuthField } from "./AuthField";
 import { SigninFormType } from "@/types/auth";
 import { useRouter } from "next/navigation";
-import { signInUser } from "@/lib/api/auth";
 import { toast } from "sonner";
 import { BackendError } from "@/types/auth";
 import { useAuthStore } from "@/store/useAuthStore";
+import { GoogleLogin } from "@react-oauth/google";
 
 export function SignInForm() {
     // Router for navigation after submit
     const router = useRouter()
 
-    // Get sign in action from auth store
-    const {login} = useAuthStore()
+    // Get sign in and google login action from auth store
+    const {login, loginWithGoogle} = useAuthStore()
 
     // Form data
     const [formData, setFormData] = useState<SigninFormType>({
@@ -135,9 +135,11 @@ export function SignInForm() {
                 </div>
             </div>
 
-            {/* Google SSO button */}
-            <button
+            {/* Google official component button */}
+            {/* <button
                 type="button"
+                disabled={isLoading || isGoogleLoading}
+                onClick={() => handleGoogleLogin()}
                 className="w-full flex items-center justify-center gap-3 py-3 rounded-xl border border-border bg-muted/30 text-sm text-foreground hover:bg-muted/60 transition-all duration-150 mb-5"
             >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -146,8 +148,34 @@ export function SignInForm() {
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                 </svg>
-                Continue with Google
-            </button>
+                {isGoogleLoading ? "Connecting to Google..." : "Continue with Google"}
+            </button> */}
+            <div className="w-full flex justify-center mb-5 target-google-btn">
+                <GoogleLogin 
+                    onSuccess={async (credentialResponse) => {
+                        // Set loading state
+                        setIsLoading(true);
+                        // API call
+                        try {
+                            const user = await loginWithGoogle(credentialResponse.credential as string);
+                            toast.success(`Welcome, ${user.name}!`)
+                            router.push("/")
+                        } catch(err) {
+                            const serverError = err as BackendError;
+                            setErrors({ server: serverError.message || "Google authentication failed." });
+                        } finally {
+                            setIsLoading(false);
+                        }
+                    }}
+                    onError={() => {
+                        toast.error("Google Sign-In failed.")
+                    }}
+                    theme="filled_black"
+                    shape="pill"
+                    text="continue_with"
+                    width="100%"
+                />
+            </div>
 
             {/* Divider */}
             <div className="flex items-center gap-3 mb-5">
