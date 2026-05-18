@@ -47,7 +47,8 @@ export interface AuthState {
     user: User | null;
     accessToken: string | null;
     isLoading: boolean;
-    login: (formData: SigninFormType) => Promise<User>
+    login: (formData: SigninFormType) => Promise<User>;
+    loginWithGoogle: (idToken: string) => Promise<User>;
     setUser: (user: User | null) => void;
     refresh: () => Promise<void>;
     checkAuth: () => Promise<void>;
