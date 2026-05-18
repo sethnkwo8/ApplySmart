@@ -7,7 +7,7 @@ export function Hero() {
         <section className="pt-36 pb-14 px-6 md:px-12 max-w-5xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 text-xs font-mono tracking-widest uppercase text-primary border border-primary/25 bg-primary/8 rounded-full px-4 py-1.5 mb-8">
             <Sparkles size={10} />
-            ATS & Skill Match Optimizatio
+            ATS & Skill Match Optimization
           </div>
           <h1 className="font-display text-5xl md:text-[4.5rem] font-light leading-[1.08] tracking-tight text-foreground mb-5">
             Turn your CV into a
