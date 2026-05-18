@@ -6,6 +6,14 @@ The platform analyzes uploaded resumes against job listings, identifies keyword 
 
 ---
 
+## 🌍 Live Frontend Preview
+
+🚀 https://apply-smart-six.vercel.app
+
+> Backend AI optimization pipeline is currently under active development.
+
+---
+
 ## 🌐 Vision
 
 Modern hiring systems rely heavily on Applicant Tracking Systems (ATS), making it difficult for qualified candidates to get noticed.
@@ -38,6 +46,10 @@ into a clean, modern SaaS-style experience.
   - Paste resume text directly
   - Resume upload UI support
   - Job description analysis input
+  - Drag-and-drop resume uploads
+  - PDF, DOCX, and TXT upload support
+  - Toast-based upload feedback
+  - Protected optimization workflow
 
 - 🎯 ATS Optimization
   - Resume-to-job matching
@@ -51,6 +63,22 @@ into a clean, modern SaaS-style experience.
   - Animated loading states
   - Clean auth experience
   - Dark modern design system
+  - Interactive drag-and-drop upload UI
+  - Protected tool access flow
+
+---
+
+## 🖼️ Project Screenshots
+
+Below are key screenshots showcasing the main features of ApplySmart:
+
+| Feature | Screenshot | Description |
+|---------|------------|-------------|
+| Landing Page | ![landing-page](screenshots/landing-page.png) | ApplySmart Landing Page (Logged in). |
+| Landing Page 2 | ![landing-page](screenshots/landing-page-2.png) | ApplySmart Landing Page. |
+| Optimization Tool | ![onboarding-1](screenshots/optimization-tool.png) | Main Optimization Tool. |
+| Sign Up | ![register](screenshots/signup-page.png) | ApplySmart Sign Up Page. |
+| Sign In | ![login](screenshots/sign-in-page.png) | ApplySmart Sign In Page. |
 
 ---
 
@@ -91,6 +119,17 @@ Authentication state is managed globally using Zustand:
 
 ---
 
+### Resume Upload Pipeline
+
+ApplySmart includes a flexible resume ingestion system supporting:
+- drag-and-drop uploads
+- PDF/DOCX/TXT files
+- direct resume text pasting
+- upload state management
+- protected optimization access flow
+
+The upload architecture was designed to support future AI-powered parsing and resume analysis pipelines.
+
 ### Decoupled Architecture
 ApplySmart follows a fully decoupled architecture:
 - Next.js frontend
@@ -114,7 +153,7 @@ This structure improves scalability, maintainability, and deployment flexibility
 | **State Management** | Zustand |
 | **Validation** | Zod |
 | **AI Integration** | OpenAI API *(planned)* |
-| **Deployment** | Vercel / Render *(planned)* |
+| **Deployment** | Vercel *(frontend deployed)* / Render *(planned)* |
 
 ---
 
@@ -159,7 +198,6 @@ ApplySmart follows a modular full-stack architecture:
 - 💳 Payment Integration
 - 👤 User Dashboard
 - 📂 Resume History
-- 🌍 Google OAuth
 - 🐳 Docker Support
 - ⚙️ CI/CD Pipeline
 
@@ -216,9 +254,10 @@ ApplySmart is actively under development.
 Current focus:
 
 - AI resume optimization pipeline
-- protected dashboard architecture
-- file upload + parsing
-- ATS scoring engine
+- resume parsing + extraction engine
+- ATS scoring system
+- Analysis dashboard architecture
+- AI-powered rewrite suggestions
 
 ---
 
