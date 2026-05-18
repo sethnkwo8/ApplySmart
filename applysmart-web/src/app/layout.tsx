@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Toaster } from "sonner";
 import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export const metadata: Metadata = {
   title: "ApplySmart - AI Resume & ATS Optimization Tool",
@@ -18,10 +19,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AuthProvider>
-          <main>{children}</main>
-          <Toaster position="bottom-right" richColors theme="dark" />
-        </AuthProvider>
+        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
+          <AuthProvider>
+            <main>{children}</main>
+            <Toaster position="bottom-right" richColors theme="dark" />
+          </AuthProvider>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );
