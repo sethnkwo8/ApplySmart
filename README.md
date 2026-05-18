@@ -13,9 +13,9 @@ Modern hiring systems rely heavily on Applicant Tracking Systems (ATS), making i
 ApplySmart aims to bridge this gap by combining:
 - AI-powered resume analysis
 - ATS optimization
-- keyword matching
-- intelligent resume rewriting
-- job-specific recommendations
+- Keyword matching
+- Intelligent resume rewriting
+- Job-specific recommendations
 
 into a clean, modern SaaS-style experience.
 
@@ -28,7 +28,10 @@ into a clean, modern SaaS-style experience.
   - Refresh-token based session persistence
   - HTTP-only cookie security
   - Zustand-powered frontend auth state
-  - Login / Signup flow
+  - Email/password authentication
+  - Google OAuth authentication
+  - Automatic account linking for Google sign-ins
+  - Multi-provider authentication architecture
   - Persistent sessions with automatic auth hydration
 
 - 📄 Resume Input
@@ -65,6 +68,20 @@ This approach improves security by avoiding localStorage token storage while mai
 
 ---
 
+### Multi-Provider Authentication
+ApplySmart supports both traditional email/password authentication and Google OAuth sign-in.
+
+The authentication system intelligently handles:
+- local authentication
+- Google OAuth login
+- account linking by email
+- provider-aware login validation
+- JWT issuance across authentication providers
+
+Users who initially register with email/password can later authenticate using Google with automatic account linking support.
+
+---
+
 ### Frontend State Management
 Authentication state is managed globally using Zustand:
 - automatic auth hydration
@@ -93,7 +110,7 @@ This structure improves scalability, maintainability, and deployment flexibility
 | **UI/UX** | Lucide Icons, Sonner |
 | **Backend** | Node.js, Express.js, TypeScript |
 | **Database** | MongoDB |
-| **Authentication** | JWT, HTTP-only cookies |
+| **Authentication** | JWT, HTTP-only cookies, Google OAuth |
 | **State Management** | Zustand |
 | **Validation** | Zod |
 | **AI Integration** | OpenAI API *(planned)* |
@@ -123,8 +140,8 @@ ApplySmart follows a modular full-stack architecture:
 
 ## 🔐 Authentication Flow
 
-1. User signs in
-2. Backend validates credentials
+1. User signs in with email/password or Google OAuth
+2. Backend verifies credentials or Google ID token
 3. Access token returned to frontend
 4. Refresh token stored securely in HTTP-only cookie
 5. Zustand hydrates auth state
@@ -153,7 +170,7 @@ ApplySmart follows a modular full-stack architecture:
 ### 1. Clone repository
 
 ```bash
-git clone https://github.com/sethnkwo8/ApplySmart
+git clone https://github.com/sethnkwo8/ApplySmart.git
 ```
 
 ### 2. Frontend setup
@@ -178,6 +195,7 @@ npm run dev
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
 ```
 
 **Backend** .env
@@ -188,6 +206,8 @@ MONGO_URI=your-mongo-uri
 JWT_SECRET=your_jwt_secret
 JWT_REFRESH_SECRET=your_refresh_secret
 NODE_ENV=development
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_secret
 ```
 
 ## 🧪 Current Status
@@ -195,7 +215,6 @@ ApplySmart is actively under development.
 
 Current focus:
 
-- Google OAuth integration
 - AI resume optimization pipeline
 - protected dashboard architecture
 - file upload + parsing
@@ -212,6 +231,24 @@ Current focus:
 - Production-style session persistence
 - API abstraction patterns
 - Modern SaaS UI architecture
+- OAuth authentication flows
+- Google ID token verification
+- multi-provider account management
+- secure cookie-based auth architecture
+
+---
+
+## 🛡 Security Considerations
+ApplySmart implements several production-style security practices:
+
+- HTTP-only refresh token cookies
+- short-lived access tokens
+- secure JWT verification
+- provider-aware authentication validation
+- centralized backend error handling
+- protected session restoration flow
+- password hashing with bcrypt
+- secure Google ID token verification
 
 ---
 
