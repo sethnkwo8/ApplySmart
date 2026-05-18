@@ -1,6 +1,6 @@
 // Auth Zustand store file
 import { create } from "zustand";
-import { getUser, signInUser, logoutUser, refreshToken } from "@/lib/api/auth";
+import { signInUser, logoutUser, refreshToken, googleLogin } from "@/lib/api/auth";
 import { AuthState } from "@/types/auth";
 
 // Initialize the store
@@ -17,6 +17,19 @@ export const useAuthStore = create<AuthState>((set) => ({
             const data = await signInUser(formData);
             set({user: data.user, accessToken: data.accessToken, isLoading: false}); // set user to signed in user and loading state to false
             return data.user; // Return data for toast success
+        } catch(err) {
+            set({isLoading: false});
+            throw err;
+        }
+    },
+    // Google login action
+    loginWithGoogle: async (idToken) => {
+        // Set loading state to true
+        set({isLoading: true});
+        try{
+            const data = await googleLogin(idToken);
+            set({user: data.user, accessToken: data.accessToken, isLoading:false});
+            return data.user
         } catch(err) {
             set({isLoading: false});
             throw err;
