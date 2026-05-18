@@ -2,9 +2,9 @@
 "use client"
 
 import { useAuthStore } from "@/store/useAuthStore";
-import { FileText, Upload, Briefcase, Zap, ArrowRight } from "lucide-react";
+import { FileText, Upload, Briefcase, Zap, ArrowRight, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { toast } from "sonner";
 
 export function MainTool() {
@@ -22,8 +22,57 @@ export function MainTool() {
   // Optimizing state
   const [isOptimizing, setIsOptimizing] = useState<boolean>(false);
 
-  const hasInputValues = cvText.trim().length > 0 && jobDescription.trim().length > 0;
+  // File name state
+  const [fileName, setFileName] = useState<string | null>(null);
 
+  // Track the actual raw file
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  // Check for input values
+  const hasInputValues = (cvText.trim().length > 0 || selectedFile !== null) && jobDescription.trim().length > 0;
+
+  // File input ref
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Function to handle file upload
+  const handleFileUpload = useCallback((file: File) => {
+    // Set file name
+    setFileName(file.name);
+
+    // Set selected file to file uploaded
+    setSelectedFile(file)
+
+    // If it's a plain text file .txt
+    if (file.type === "text/plain") {
+      // Create reader 
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (typeof e.target?.result === "string") {
+          // Set cv text to results of text file
+          setCvText(e.target.result);
+        }
+      };
+      reader.readAsText(file);
+    } else {
+      // For .pdf or .docx files
+      setCvText(""); // Clear previous cv text
+      // Toast success
+      toast.success(`${file.name} attached!`, {
+        description: "Our server will extract the text directly during optimization."
+      });
+    }
+  }, []);
+
+  // Function to handle file clearing
+  const handleClearFile = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation(); // Avoid triggering parent click trigger
+    setFileName(null);
+    setSelectedFile(null);
+    setCvText("");
+    if (fileInputRef.current) fileInputRef.current.value = ""; // Reset file input target 
+  }, [])
+
+  // Function to handle optimization
   async function handleOptimizeSubmit() {
     // If not logged in
     if (!user) {
@@ -65,29 +114,62 @@ export function MainTool() {
             </p>
             {/* Drop zone */}
             <div
+              onClick={() => fileInputRef.current?.click()}
               className={`relative rounded-xl border-2 border-dashed transition-all duration-200 cursor-pointer border-border hover:border-muted-foreground/30`}
             >
               <input
                 type="file"
                 accept=".pdf,.doc,.docx,.txt"
                 className="hidden"
+                ref={fileInputRef}
+                onChange={(e) =>
+                    e.target.files?.[0] && handleFileUpload(e.target.files[0])}
               />
-              <div className="flex flex-col items-center py-8 px-4 text-center">
-              <div className="w-11 h-11 rounded-xl bg-muted flex items-center justify-center mb-3">
-                  <Upload size={18} className="text-muted-foreground" />
-              </div>
-              <p className="text-sm font-medium text-foreground">
-                  Drop your CV here
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                  PDF, DOCX, or TXT — or paste text below
-              </p>
-              </div>
+              {fileName ? (
+                  <div className="flex items-center gap-3 px-5 py-4 group/file">
+                    <div className="w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
+                      <FileText size={16} className="text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate text-foreground">
+                        {fileName}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Ready for extraction — click to swap
+                      </p>
+                    </div>
+                    <button 
+                      onClick={handleClearFile}
+                      className="p-1 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center py-8 px-4 text-center">
+                    <div className="w-11 h-11 rounded-xl bg-muted flex items-center justify-center mb-3">
+                      <Upload size={18} className="text-muted-foreground" />
+                    </div>
+                    <p className="text-sm font-medium text-foreground">
+                      Drop your CV here
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      PDF, DOCX, or TXT — or paste text below
+                    </p>
+                  </div>
+                )}
             </div>
             {/* Text area */}
             <textarea
               value={cvText}
-              onChange={(e) => setCvText(e.target.value)}
+              onChange={(e) => {
+                setCvText(e.target.value);
+                // Clear selected file if they start typing
+                if (fileName) {
+                  setFileName(null);
+                  setSelectedFile(null);
+              }
+              }}
               placeholder="Or paste your CV text here — include your experience, skills, and education..."
               className="flex-1 min-h-60 w-full bg-card border border-border rounded-xl px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:border-primary/30 transition-colors duration-150"
             />
