@@ -28,6 +28,9 @@ export function MainTool() {
   // Track the actual raw file
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  // Drag over state
+  const [dragOver, setDragOver] = useState(false);
+
   // Check for input values
   const hasInputValues = (cvText.trim().length > 0 || selectedFile !== null) && jobDescription.trim().length > 0;
 
@@ -62,6 +65,14 @@ export function MainTool() {
       });
     }
   }, []);
+
+  // Function to handle file drop
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files[0];
+      if (file) handleFileUpload(file);
+  }, [handleFileUpload])
 
   // Function to handle file clearing
   const handleClearFile = useCallback((e: React.MouseEvent) => {
@@ -114,8 +125,18 @@ export function MainTool() {
             </p>
             {/* Drop zone */}
             <div
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragOver(true);
+              }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
-              className={`relative rounded-xl border-2 border-dashed transition-all duration-200 cursor-pointer border-border hover:border-muted-foreground/30`}
+              className={`relative rounded-xl border-2 border-dashed transition-all duration-200 cursor-pointer ${
+                dragOver
+                  ? "border-primary bg-primary/5 scale-[1.01]"
+                  : "border-border hover:border-muted-foreground/30"
+              }`}
             >
               <input
                 type="file"
