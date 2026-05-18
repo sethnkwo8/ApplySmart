@@ -5,6 +5,7 @@ import { Zap } from "lucide-react"
 import Link from "next/link"
 import { useAuthStore } from "@/store/useAuthStore"
 import { toast } from "sonner";
+import { ProfileDropdown } from "./ProfileDropdown";
 
 export function Header() {
     const {user, isLoading, logout} = useAuthStore();
@@ -48,12 +49,7 @@ export function Header() {
             </nav>
             <div className="flex items-center gap-2">
                 {user ? (
-                    <button
-                        className="text-sm px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-150"
-                        onClick={handleLogout}
-                    >
-                        Logout
-                    </button>
+                    <ProfileDropdown user={user} logout={handleLogout} />
                 ): (
                     <>
                         <Link
