@@ -11,6 +11,6 @@ export default function AuthProvider({children}: {children: React.ReactNode}) {
     // useEffectthat runs on mount
     useEffect(() => {
         checkAuth()
-    }, [checkAuth])
+    }, [])
     return <>{children}</>
 }
