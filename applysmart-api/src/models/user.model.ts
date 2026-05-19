@@ -11,6 +11,7 @@ export interface IUser extends Document {
     provider: ProviderName;
     googleId?: string;
     password?: string;
+    optimizationNumber: number;
 }
 
 const userSchema = new Schema<IUser> ({
@@ -37,6 +38,11 @@ const userSchema = new Schema<IUser> ({
     password: {
         required: false,
         type: String
+    },
+    // Tracks usage limits
+    optimizationNumber: { 
+        type: Number,
+        default: 0
     }
 }, {
     timestamps: true
