@@ -28,6 +28,7 @@ export interface IOptimized extends Document {
     fileType?: string;
     fileSize?: number;
     rawCvText: string;
+    extractedTextLength?: number;
     jobDescription: string;
     atsScore: number;
     summary: string;
@@ -61,6 +62,10 @@ const optimizedSchema = new Schema<IOptimized>({
     rawCvText: {
         type: String,
         required: true
+    },
+    extractedTextLength: {
+        type: Number,
+        required: false
     },
     jobDescription: {
         type: String,
