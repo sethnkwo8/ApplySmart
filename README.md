@@ -55,6 +55,11 @@ into a clean, modern SaaS-style experience.
   - Resume-to-job matching
   - Keyword gap analysis
   - ATS compatibility scoring
+  - Resume parsing + extraction engine
+  - PDF/DOCX/TXT text extraction pipeline
+  - File validation + upload security middleware
+  - Optimization history architecture
+  - Skill classification + weighted matching system
   - AI-assisted resume improvements *(in progress)*
 
 - 🎨 Modern UX
@@ -130,7 +135,47 @@ ApplySmart includes a flexible resume ingestion system supporting:
 
 The upload architecture was designed to support future AI-powered parsing and resume analysis pipelines.
 
+### ⚙️ Resume Parsing & Processing Pipeline
+
+ApplySmart includes a backend resume ingestion pipeline engineered for scalable AI analysis workflows.
+
+Supported File Types:
+- PDF
+- DOCX
+- TXT
+
+#### Pipeline Architecture
+The upload system uses:
+
+- Multer memory storage for in-memory processing
+- MIME-type validation middleware
+- file size protection limits
+- centralized upload error handling
+- asynchronous text extraction utilities
+
+#### Parsing Stack
+
+- pdf-parse for PDF extraction
+- mammoth for DOCX extraction
+- custom normalization utilities for text cleanup
+
+The extraction pipeline also handles:
+
+- malformed uploads
+- unsupported MIME types
+- empty or unreadable documents
+- centralized validation responses
+
+This architecture was designed to support future:
+
+- AI resume rewriting
+- ATS scoring
+- semantic skill extraction
+- optimization history tracking
+- resume intelligence pipeline
+
 ### Decoupled Architecture
+
 ApplySmart follows a fully decoupled architecture:
 - Next.js frontend
 - Express.js backend API
@@ -151,7 +196,8 @@ This structure improves scalability, maintainability, and deployment flexibility
 | **Database** | MongoDB |
 | **Authentication** | JWT, HTTP-only cookies, Google OAuth |
 | **State Management** | Zustand |
-| **Validation** | Zod |
+| **Validation & Uploads** | Zod, Multer |
+| **Document Processing** | pdf-parse, Mammoth |
 | **AI Integration** | OpenAI API *(planned)* |
 | **Deployment** | Vercel *(frontend deployed)* / Render *(planned)* |
 
@@ -177,6 +223,42 @@ ApplySmart follows a modular full-stack architecture:
 
 ---
 
+## 👨🏿‍💻 Optimization Engine Architecture
+
+ApplySmart introduces a modular optimization architecture designed around scalable resume intelligence workflows.
+
+### Core Models
+- `User`
+- `Skill`
+- `Optimization`
+
+### Skill Intelligence System
+
+The platform includes a categorized skill engine with:
+- weighted importance scoring
+- alias-based skill matching
+- categorized industry skills
+- recommendation generation
+- learning resource mapping
+
+### Optimization Tracking
+
+Each optimization stores:
+- uploaded resume metadata
+- extracted raw resume text
+- ATS score results
+- job description context
+- matched/missing skills
+- generated optimization summaries
+
+This structure enables:
+- historical optimization tracking
+- future analytics dashboards
+- AI-assisted rewrite suggestions
+- resume improvement insights
+
+---
+
 ## 🔐 Authentication Flow
 
 1. User signs in with email/password or Google OAuth
@@ -192,8 +274,9 @@ ApplySmart follows a modular full-stack architecture:
 
 - 🤖 AI Resume Optimization
 - 📊 ATS Match Scoring
-- 📝 Resume Summary Rewriting
-- 📄 PDF/DOCX Resume Parsing
+- 🧠 Semantic AI Skill Extraction
+- ✍️ AI Resume Rewriting
+- 📊 Resume Analytics Dashboard
 - 🔍 Skill Gap Detection
 - 💳 Payment Integration
 - 👤 User Dashboard
@@ -253,11 +336,12 @@ ApplySmart is actively under development.
 
 Current focus:
 
-- AI resume optimization pipeline
-- resume parsing + extraction engine
-- ATS scoring system
-- Analysis dashboard architecture
-- AI-powered rewrite suggestions
+- AI optimization engine integration
+- semantic skill matching
+- ATS scoring algorithms
+- OpenAI-powered rewrite suggestions
+- optimization dashboard architecture
+- historical resume analytics
 
 ---
 
@@ -274,6 +358,13 @@ Current focus:
 - Google ID token verification
 - multi-provider account management
 - secure cookie-based auth architecture
+- file upload middleware architecture
+- MIME-type validation strategies
+- document parsing pipelines
+- asynchronous controller handling
+- centralized Express error architecture
+- scalable MongoDB schema design
+- optimization engine modeling
 
 ---
 
@@ -288,6 +379,11 @@ ApplySmart implements several production-style security practices:
 - protected session restoration flow
 - password hashing with bcrypt
 - secure Google ID token verification
+- MIME-type upload validation
+- file size restriction enforcement
+- centralized async error handling
+- protected upload pipeline architecture
+- in-memory upload processing
 
 ---
 
