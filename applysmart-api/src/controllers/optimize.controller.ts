@@ -1,15 +1,17 @@
 // Optimize controller
-import { Response, NextFunction } from "express";
+import { Response} from "express";
 import { AuthRequest } from "../types/express.js";
 import { AppError } from "../utils/AppError.js";
-import { optimizeCV } from "../services/optimize.service.js";
+import { createOptimizationReport } from "../services/optimize.service.js";
 import { extractText } from "../utils/textExtractor.js";
 
-export async function optimize(req: AuthRequest, res: Response, next: NextFunction) {
+export async function optimize(req: AuthRequest, res: Response) {
     // Verify user
     if (!req.user) {
         throw new AppError("Unauthorized", 401)
     }
+
+    const userId = req.user.userId
 
     let cvText: string;
     const {jobDescription} = req.body;
@@ -27,10 +29,18 @@ export async function optimize(req: AuthRequest, res: Response, next: NextFuncti
         cvText = req.body.cvText;
     }
 
-    const result = await optimizeCV(cvText, jobDescription)
+    const result = await createOptimizationReport({
+        userId,
+        cvText,
+        jobDescription,
+        fileName: req.file?.originalname,
+        fileSize: req.file?.size,
+        fileType: req.file?.mimetype
+    })
 
-    res.status(200).json({
-        message: "success",
+    res.status(201).json({
+        success: true,
+        message: "CV optimized and analytics report generated successfully",
         data: result
     })
 
