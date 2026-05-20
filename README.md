@@ -101,6 +101,28 @@ This approach improves security by avoiding localStorage token storage while mai
 
 ---
 
+## 🤖 AI Optimization Engine
+
+ApplySmart integrates Google Gemini to generate structured ATS optimization reports.
+
+The optimization engine:
+
+- analyzes uploaded resumes against job descriptions
+- generates ATS compatibility scores
+- identifies missing and detected skills
+- produces structured optimization summaries
+- maps AI-detected skills against internal database records
+
+The AI pipeline uses:
+
+- schema-constrained JSON responses
+- centralized parsing validation
+- asynchronous optimization processing
+- persistent optimization history tracking
+- failure-state recovery architecture
+
+---
+
 ### Multi-Provider Authentication
 ApplySmart supports both traditional email/password authentication and Google OAuth sign-in.
 
@@ -198,7 +220,7 @@ This structure improves scalability, maintainability, and deployment flexibility
 | **State Management** | Zustand |
 | **Validation & Uploads** | Zod, Multer |
 | **Document Processing** | pdf-parse, Mammoth |
-| **AI Integration** | OpenAI API *(planned)* |
+| **AI Integration** | Google Gemini API |
 | **Deployment** | Vercel *(frontend deployed)* / Render *(planned)* |
 
 ---
@@ -340,7 +362,7 @@ Current focus:
 - AI optimization engine integration
 - semantic skill matching
 - ATS scoring algorithms
-- OpenAI-powered rewrite suggestions
+- Gemini-powered rewrite suggestions
 - optimization dashboard architecture
 - historical resume analytics
 
@@ -385,6 +407,8 @@ ApplySmart implements several production-style security practices:
 - centralized async error handling
 - protected upload pipeline architecture
 - in-memory upload processing
+- AI optimization rate-limiting
+-user-based request throttling
 
 ---
 
@@ -407,6 +431,7 @@ Special thanks to:
 - Zustand for lightweight and scalable client-side state management.
 - Shadcn UI and Lucide Icons for helping create a modern UI/UX experience.
 - The developer community across GitHub, Stack Overflow, and MDN Web Docs for continuous learning and problem-solving resources.
+- Google Gemini for enabling AI-powered resume optimization workflows.
 
 This project continues to evolve as new features, cloud infrastructure improvements, DevOps practices, and AI capabilities are added.
 
