@@ -329,6 +329,7 @@ JWT_REFRESH_SECRET=your_refresh_secret
 NODE_ENV=development
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_secret
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
 ## 🧪 Current Status
