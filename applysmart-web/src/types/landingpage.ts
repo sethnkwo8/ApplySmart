@@ -1,4 +1,5 @@
 import { User } from "./auth";
+import { OptimizedResultData } from "./optimize";
 
 // How it works steps interface
 export interface HowItWorksSteps {
@@ -27,5 +28,6 @@ export type View = "input" | "analyzing" | "results"
 // Main tool props
 export interface MainToolProps {
   onStartAnalyzing: () => void;
-  onOptimizationSuccess: (data: any) => void;
+  onOptimizationSuccess: (data: OptimizedResultData) => void;
+  onOptimizationFailure: () => void;
 }
