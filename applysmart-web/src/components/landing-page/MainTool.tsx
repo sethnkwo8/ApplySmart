@@ -6,8 +6,10 @@ import { FileText, Upload, Briefcase, Zap, ArrowRight, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState, useRef, useCallback } from "react";
 import { toast } from "sonner";
+import { sendCvForOptimization } from "@/lib/api/optimize";
+import { MainToolProps } from "@/types/landingpage";
 
-export function MainTool() {
+export function MainTool({ onOptimizationSuccess, onStartAnalyzing }: MainToolProps) {
   const router = useRouter();
 
   // Get user from auth store
@@ -101,14 +103,28 @@ export function MainTool() {
     }
 
     // Set optimizing state to true
+    onStartAnalyzing(); // Start analyzing view
     setIsOptimizing(true);
 
     // API call
     try {
-        toast.loading("Analyzing keyword weights and compliance metrics...");
-        // TODO: Connect your backend POST /api/optimize handler pipeline here
-    } catch (err) {
-        toast.error("Analysis pipeline failed. Please retry.");
+        // Call optimize function
+        const response = await sendCvForOptimization({
+          jobDescription, 
+          cvText: selectedFile ? undefined : cvText, 
+          cvFile: selectedFile || undefined
+        })
+
+        if (response.success) {
+          toast.success("CV Analysis Complete!");
+          // Fire callback to swap the view state up inside LandingPage
+          onOptimizationSuccess(response.data);
+        }
+
+        console.log(response)
+    } catch (err: any) {
+        toast.error(err?.message || "Analysis pipeline failed. Please retry.");
+        setIsOptimizing(false);
     } finally {
         setIsOptimizing(false);
     }
@@ -183,16 +199,18 @@ export function MainTool() {
             {/* Text area */}
             <textarea
               value={cvText}
+              disabled={!!selectedFile} // Disable if file is uploaded
               onChange={(e) => {
                 setCvText(e.target.value);
-                // Clear selected file if they start typing
-                if (fileName) {
-                  setFileName(null);
-                  setSelectedFile(null);
-              }
               }}
-              placeholder="Or paste your CV text here — include your experience, skills, and education..."
-              className="flex-1 min-h-60 w-full bg-card border border-border rounded-xl px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:border-primary/30 transition-colors duration-150"
+              placeholder={
+                selectedFile 
+                  ? "Using uploaded file content for text extraction..." 
+                  : "Or paste your CV text here — include your experience, skills, and education..."
+              }
+              className={`flex-1 min-h-60 w-full bg-card border border-border rounded-xl px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:border-primary/30 transition-colors duration-150 ${
+                selectedFile ? "opacity-50 cursor-not-allowed bg-muted/30" : ""
+              }`}
             />
           </div>
 
