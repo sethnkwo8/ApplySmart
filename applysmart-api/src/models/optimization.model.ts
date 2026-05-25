@@ -1,6 +1,6 @@
 // Optimization model
 import mongoose, {Schema, Document} from "mongoose";
-import { ImportanceWeight, ImportanceWeights } from "./skills.model.js";
+import { ImportanceWeight, ImportanceWeights, ILearningResources } from "./skills.model.js";
 
 // Matched skill interface
 export interface IMatchedSkill {
@@ -9,6 +9,12 @@ export interface IMatchedSkill {
     importanceWeight: ImportanceWeight;
     foundInCv: boolean;
     suggestionText: string;
+}
+
+// Skill learning interface
+export interface ISkillLearningPath {
+    skillName: string;
+    resources: ILearningResources[];
 }
 
 // Enums for Optimization status
@@ -34,6 +40,7 @@ export interface IOptimized extends Document {
     summary: string;
     missingSkills: IMatchedSkill[];
     detectedSkills: IMatchedSkill[];
+    learningResources: ISkillLearningPath[];
     optimizationStatus: OptimizationStatus;
     processingTimeMs?: number;
     modelUsed?: string;
@@ -93,6 +100,13 @@ const optimizedSchema = new Schema<IOptimized>({
         importanceWeight: {type: String, enum: ImportanceWeights, default: "medium", required: true},
         foundInCv: {type: Boolean, required: true},
         suggestionText: {type: String, required: true}
+    }],
+    learningResources: [{
+        skillName: { type: String, required: true },
+        resources: [{
+            title: { type: String, required: true },
+            url: { type: String, required: true }
+        }]
     }],
     optimizationStatus: {
         type: String,
