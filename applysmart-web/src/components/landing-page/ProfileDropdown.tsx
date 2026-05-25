@@ -1,7 +1,7 @@
 // Profile dropdown component
 "use client"
 
-import { User, LogOut, ChevronDown } from "lucide-react";
+import { User, LogOut, ChevronDown, LayoutDashboard } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { ProfileDropdownProps } from "@/types/landingpage";
 
@@ -56,16 +56,29 @@ export function ProfileDropdown({user, logout}: ProfileDropdownProps) {
                             {user?.email}
                         </p>
                     </div>
-                    <button
-                        onClick={() => {
+                    <div className="py-1">
+                        <button
+                            onClick={() => {
                             setIsOpen(false);
-                            logout();
-                        }}
-                        className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all duration-150"
-                    >
-                        <LogOut size={13} />
-                        Logout
-                    </button>
+                            }}
+                            className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all duration-150"
+                        >
+                            <LayoutDashboard size={13} />
+                            Dashboard
+                        </button>
+                    </div>
+                    <div className="border-t border-border">
+                        <button
+                            onClick={() => {
+                                setIsOpen(false);
+                                logout();
+                            }}
+                            className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all duration-150"
+                        >
+                            <LogOut size={13} />
+                            Logout
+                        </button>
+                    </div>
                 </div>
             )}
         </div>
