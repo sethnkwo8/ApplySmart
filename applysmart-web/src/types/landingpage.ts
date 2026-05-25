@@ -20,3 +20,12 @@ export interface ProfileDropdownProps {
     user: User | null;
     logout(): Promise<void>
 }
+
+// Views for application
+export type View = "input" | "analyzing" | "results"
+
+// Main tool props
+export interface MainToolProps {
+  onStartAnalyzing: () => void;
+  onOptimizationSuccess: (data: any) => void;
+}
