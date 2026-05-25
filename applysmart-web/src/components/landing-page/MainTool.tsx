@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { sendCvForOptimization } from "@/lib/api/optimize";
 import { MainToolProps } from "@/types/landingpage";
 
-export function MainTool({ onOptimizationSuccess, onStartAnalyzing }: MainToolProps) {
+export function MainTool({ onOptimizationSuccess, onStartAnalyzing, onOptimizationFailure }: MainToolProps) {
   const router = useRouter();
 
   // Get user from auth store
@@ -125,6 +125,9 @@ export function MainTool({ onOptimizationSuccess, onStartAnalyzing }: MainToolPr
     } catch (err: any) {
         toast.error(err?.message || "Analysis pipeline failed. Please retry.");
         setIsOptimizing(false);
+
+        // Call handle error function
+        onOptimizationFailure()
     } finally {
         setIsOptimizing(false);
     }
