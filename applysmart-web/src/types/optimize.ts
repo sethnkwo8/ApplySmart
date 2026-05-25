@@ -4,3 +4,8 @@ export interface OptimizePayload {
     cvText?: string;
     cvFile?: File;
 }
+
+// Analyze view props interface
+export interface AnalyzingViewProps {
+  analyzeStep: number;
+}
