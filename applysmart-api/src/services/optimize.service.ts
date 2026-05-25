@@ -126,25 +126,49 @@ export async function createOptimizationReport(input: IReportInput) {
 
         // Build a dictionary lookup map
         const skillLookupMap = new Map(
-            dbSkills.map(skill => [skill.name.toLowerCase().trim(), skill._id])
+            dbSkills.map(skill => [skill.name.toLowerCase().trim(), skill])
         );
 
         // Map the MongoDB ObjectIds directly onto the Gemini schema arrays
-        const mappedDetectedSkills = aiResult.detectedSkills.map((skill: any) => ({
-            skillName: skill.skillName,
-            importanceWeight: skill.importanceWeight,
-            foundInCv: skill.foundInCv,
-            suggestionText: skill.suggestionText,
-            skillId: skillLookupMap.get(skill.skillName.toLowerCase()) // undefined if not seeded
-        }));
+        const mappedDetectedSkills = aiResult.detectedSkills.map((skill: any) => {
+            const dbMatch = skillLookupMap.get(skill.skillName.toLowerCase());
+            return {
+                skillName: skill.skillName,
+                importanceWeight: skill.importanceWeight,
+                foundInCv: skill.foundInCv,
+                suggestionText: skill.suggestionText,
+                skillId: dbMatch ? dbMatch._id : undefined // Get the ID from the full object
+            };
+        });
 
-        const mappedMissingSkills = aiResult.missingSkills.map((skill: any) => ({
-            skillName: skill.skillName,
-            importanceWeight: skill.importanceWeight,
-            foundInCv: skill.foundInCv,
-            suggestionText: skill.suggestionText,
-            skillId: skillLookupMap.get(skill.skillName.toLowerCase()) // undefined if not seeded
-        }));
+        const mappedMissingSkills = aiResult.missingSkills.map((skill: any) => {
+            const dbMatch = skillLookupMap.get(skill.skillName.toLowerCase());
+            return {
+                skillName: skill.skillName,
+                importanceWeight: skill.importanceWeight,
+                foundInCv: skill.foundInCv,
+                suggestionText: skill.suggestionText,
+                skillId: dbMatch ? dbMatch._id : undefined // Get the ID from the full object
+            };
+        });
+
+        // Get learning resources or missing skills
+        const aggregatedLearningResources = aiResult.missingSkills
+        .map((skill: any) => {
+            const dbMatch = skillLookupMap.get(skill.skillName.toLowerCase());
+            
+            if (dbMatch && dbMatch.learningResources && dbMatch.learningResources.length > 0) {
+                return {
+                    skillName: dbMatch.name, 
+                    resources: dbMatch.learningResources.map((res: any) => ({
+                        title: res.title,
+                        url: res.url
+                    }))
+                };
+            }
+            return null;
+        })
+        .filter((item): item is NonNullable<typeof item> => item !== null);
 
         // Calculate total execution processing duration
         const processingTimeMs = Date.now() - startTime;
@@ -160,6 +184,7 @@ export async function createOptimizationReport(input: IReportInput) {
         optimizationReport.summary = aiResult.summary;
         optimizationReport.detectedSkills = mappedDetectedSkills;
         optimizationReport.missingSkills = mappedMissingSkills;
+        optimizationReport.learningResources = aggregatedLearningResources;
         optimizationReport.optimizationStatus = "completed";
         optimizationReport.processingTimeMs = processingTimeMs;
         optimizationReport.modelUsed = "gemini-2.5-flash";
@@ -170,6 +195,12 @@ export async function createOptimizationReport(input: IReportInput) {
     } catch(err: any) {
         optimizationReport.optimizationStatus = "failed";
         await optimizationReport.save();
+
+        // API capacity limits errors
+        if (err?.status === 503 || err?.message?.includes("high demand") || err?.message?.includes("UNAVAILABLE")) {
+            throw new AppError("Our AI optimization engines are currently experiencing exceptionally high demand. Please wait a minute and click optimize again.", 503);
+        }
+
         throw new AppError(err?.message || "Optimization pipeline failed.", 500)
     }
 }
