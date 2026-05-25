@@ -9,12 +9,20 @@ import { MainTool } from "./MainTool";
 import { View } from "@/types/landingpage";
 import { AnalyzingView } from "./AnalyzingView";
 import { ANALYZE_STEPS } from "@/lib/landing-page/analyzeSteps";
+import { OptimizedResults } from "./OptimizedResults";
+import { OptimizedResultData } from "@/types/optimize";
 
 export function LandingPage() {
+    // View state
     const [view, setView] = useState<View>("input");
-    const [analyzeStep, setAnalyzeStep] = useState<number>(0);
-    const [reportData, setReportData] = useState<any>(null);
 
+    // Analyze step state
+    const [analyzeStep, setAnalyzeStep] = useState<number>(0);
+
+    // State for report data
+    const [reportData, setReportData] = useState<OptimizedResultData | null>(null);
+
+    // Increment analysis steps
     useEffect(() => {
         if (view !== "analyzing") return;
 
@@ -29,12 +37,20 @@ export function LandingPage() {
         return () => clearInterval(interval);
     }, [view]);
 
+    // Function to handle optimization failure
+    const handleOptimizationFailure = () => {
+        setView("input");
+        setAnalyzeStep(0);
+    };
+
+    // Handle analyzing start
     const handleStartAnalyzing = () => {
         setAnalyzeStep(0);
         setView("analyzing");
     };
 
-    const handleOptimizationSuccess = (data: any) => {
+    // Function to handle success
+    const handleOptimizationSuccess = (data: OptimizedResultData) => {
         setReportData(data);
         setAnalyzeStep(ANALYZE_STEPS.length);
         
@@ -59,7 +75,11 @@ export function LandingPage() {
             {view === "input" ? (
                 <div className="w-full">
                     <Hero />
-                    <MainTool onStartAnalyzing={handleStartAnalyzing} onOptimizationSuccess={handleOptimizationSuccess} />
+                    <MainTool 
+                        onStartAnalyzing={handleStartAnalyzing} 
+                        onOptimizationSuccess={handleOptimizationSuccess} 
+                        onOptimizationFailure={handleOptimizationFailure}
+                    />
                     <HowItWorks />
                 </div>
             ) : (
@@ -69,8 +89,8 @@ export function LandingPage() {
                         <AnalyzingView analyzeStep={analyzeStep}/>
                     )}
                     {/* Results view */}
-                    {view === "results" && (
-                        <div className="text-white font-mono text-xs">Results View Mount Target Placeholder</div>
+                    {view === "results" && reportData && (
+                        <OptimizedResults data={reportData} onReset={() => setView("input")} />
                     )}
                 </main>
             )}
