@@ -19,57 +19,40 @@ The platform analyzes uploaded resumes against job listings, identifies keyword 
 Modern hiring systems rely heavily on Applicant Tracking Systems (ATS), making it difficult for qualified candidates to get noticed.
 
 ApplySmart aims to bridge this gap by combining:
-- AI-powered resume analysis
-- ATS optimization
-- Keyword matching
-- Intelligent resume rewriting
-- Job-specific recommendations
-
-into a clean, modern SaaS-style experience.
+- Context-aware, schema-constrained AI resume analysis
+- Dynamic ATS suitability assessment metrics
+- In-memory dictionary skill classification with priority weighting
+- Tailored training path aggregation to automatically resolve detected skill gaps
+- Clean, secure, and modern SaaS-style user environments
 
 ---
 
-## ✨ Current Features
+## ✨ Current Features & Platform Capabilities
 
-- 🔐 Authentication System
-  - Secure JWT authentication
-  - Refresh-token based session persistence
-  - HTTP-only cookie security
-  - Zustand-powered frontend auth state
-  - Email/password authentication
-  - Google OAuth authentication
-  - Automatic account linking for Google sign-ins
-  - Multi-provider authentication architecture
-  - Persistent sessions with automatic auth hydration
+- 🔐 **Authentication Architecture**
+  - Secure short-lived JWT access tokens with long-lived session persistence.
+  - Strict HTTP-only cookie-based refresh tokens defending against XSS vectors.
+  - Multi-provider architecture managing traditional Local Email and Google OAuth pipelines.
+  - Intelligent, email-aware automated account linking on identical address match profiles.
+  - Global, hydrated frontend state distribution managed cleanly via Zustand.
 
-- 📄 Resume Input
-  - Paste resume text directly
-  - Resume upload UI support
-  - Job description analysis input
-  - Drag-and-drop resume uploads
-  - PDF, DOCX, and TXT upload support
-  - Toast-based upload feedback
-  - Protected optimization workflow
+- 📄 **Flexible Resume Ingestion**
+  - High-fidelity drag-and-drop file upload interface supporting PDF, DOCX, and TXT files.
+  - Instant text-pasting fallback canvas for ad-hoc manual optimization inputs.
+  - Multer-driven in-memory buffering preventing disk exposure vulnerabilities during extraction parsing.
+  - Real-time toast-driven pipeline response alerts using Sonner.
 
-- 🎯 ATS Optimization
-  - Resume-to-job matching
-  - Keyword gap analysis
-  - ATS compatibility scoring
-  - Resume parsing + extraction engine
-  - PDF/DOCX/TXT text extraction pipeline
-  - File validation + upload security middleware
-  - Optimization history architecture
-  - Skill classification + weighted matching system
-  - AI-assisted resume improvements *(in progress)*
+- 🤖 **Gemini Optimization Engine**
+  - Contextual target evaluation using schema-enforced JSON structures via `gemini-2.5-flash`.
+  - Upstream 503 error interceptors converting system surges into user-friendly retry loops.
+  - In-memory Dictionary Matrix Lookups grouping matching DB documents efficiently without $N+1$ latency loops.
+  - **Dynamic Knowledge Bridges:** Automatically links missing semantic skills directly to curated seed documentation paths (e.g., matching a missing "Next.js" tag to its official learning modules).
 
-- 🎨 Modern UX
-  - Responsive UI
-  - SaaS-style landing page
-  - Animated loading states
-  - Clean auth experience
-  - Dark modern design system
-  - Interactive drag-and-drop upload UI
-  - Protected tool access flow
+- 🎨 **Modern UX Engine**
+  - Immersive, dark-themed SaaS aesthetic designed around custom CSS radial accent blooms.
+  - Staged, asynchronous animated tracking loops displaying sequential pipeline updates.
+  - Responsive, mobile-first design layout utilizing Tailwind CSS flex/grid distribution patterns.
+  - Interactive, dynamic radial SVG charts projecting real-time ATS score metrics.
 
 ---
 
@@ -87,17 +70,27 @@ Below are key screenshots showcasing the main features of ApplySmart:
 
 ---
 
-## 🧠 Engineering Highlights
+## 🧠 Core Engineering Highlights
 
-### Secure Authentication Architecture
-ApplySmart uses a production-style authentication flow:
-- Short-lived access tokens
-- HTTP-only refresh token cookies
-- Automatic session restoration
-- Centralized Zustand auth state management
-- Protected frontend architecture
+### 🛡️ Hybrid Identity Rate Limiting Guard
+To safeguard commercial Gemini API resource pipelines from rogue load distribution and automated script exploitation, the `/api/optimize` endpoint uses a strict request throttle framework managed via `express-rate-limit`.
 
-This approach improves security by avoiding localStorage token storage while maintaining persistent login sessions.
+```typescript
+// Strict operational limits capped at 5 attempts per minute
+const aiOptimizationLimiter = rateLimit({
+    windowMs: 60 * 1000, 
+    max: 5, 
+    keyGenerator: (req: AuthRequest, res: Response) => {
+        return req.user?.userId ?? ipKeyGenerator(req as any, res as any);
+    }, 
+    message: {
+        success: false,
+        message: "You are optimizing resumes too quickly. Please wait a minute before analyzing another CV."
+    }
+});
+```
+
+- Why it's structured this way: Traditional IP limits risk blocking multiple distinct users inside identical corporate or public local networks. By configuring a fallback parameter that keys off validated MongoDB user identity objects (req.user.userId) first before reverting to incoming network routing strings, the system guarantees accurate user throttle metrics without cross-user disruption.
 
 ---
 
@@ -212,15 +205,14 @@ This structure improves scalability, maintainability, and deployment flexibility
 
 | Category | Tools |
 |----------|--------|
-| **Frontend** | Next.js, React, TypeScript, Tailwind CSS |
-| **UI/UX** | Lucide Icons, Sonner |
-| **Backend** | Node.js, Express.js, TypeScript |
-| **Database** | MongoDB |
-| **Authentication** | JWT, HTTP-only cookies, Google OAuth |
+| **Frontend UI Stack** | Next.js (App Router), React, TypeScript, Tailwind CSS, Lucide React, Sonner |
+| **Backend API Layer** | Node.js, Express.js (TypeScript architecture), Express Rate Limit |
+| **Database** | MongoDB, Mongoose ODM |
+| **Authentication** | JSON Web Tokens (JWT), Secure HTTP-Only Cookie Arrays, Google Auth Library |
 | **State Management** | Zustand |
 | **Validation & Uploads** | Zod, Multer |
-| **Document Processing** | pdf-parse, Mammoth |
-| **AI Integration** | Google Gemini API |
+| **Parsing Engines** | pdf-parse, mammoth |
+| **AI Integration** | Google Gemini API Framework (gemini-2.5-flash engine) |
 | **Deployment** | Vercel *(frontend deployed)* / Render *(planned)* |
 
 ---
@@ -294,9 +286,6 @@ This structure enables:
 
 ## 📌 Planned Features
 
-- 🤖 AI Resume Optimization
-- 📊 ATS Match Scoring
-- 🧠 Semantic AI Skill Extraction
 - ✍️ AI Resume Rewriting
 - 📊 Resume Analytics Dashboard
 - 🔍 Skill Gap Detection
@@ -408,7 +397,7 @@ ApplySmart implements several production-style security practices:
 - protected upload pipeline architecture
 - in-memory upload processing
 - AI optimization rate-limiting
--user-based request throttling
+- user-based request throttling
 
 ---
 
@@ -422,16 +411,12 @@ ApplySmart implements several production-style security practices:
 
 ## ⭐ Acknowledgements
 
-ApplySmart is being built as a production-style full-stack SaaS application focused on solving real-world hiring and ATS optimization challenges while deepening expertise in software engineering, cloud architecture, and AI-powered applications
+ApplySmart is built as a production-style SaaS application designed to solve real-world hiring hurdles while mastering complex architectural engineering, programmatic optimizations, and context-aware AI application pipelines.
 
-Special thanks to:
+Special recognition belongs to:
 
--  The teams behind Next.js, React, Tailwind CSS, Express.js, and MongoDB for providing the tools that power the application.
-- OpenAI for enabling AI-powered resume optimization and ATS analysis features.
-- Zustand for lightweight and scalable client-side state management.
-- Shadcn UI and Lucide Icons for helping create a modern UI/UX experience.
-- The developer community across GitHub, Stack Overflow, and MDN Web Docs for continuous learning and problem-solving resources.
-- Google Gemini for enabling AI-powered resume optimization workflows.
+- Google Gemini & Google AI Studio: For providing robust, low-latency API infrastructure allowing high-fidelity, schema-constrained text transformations.
+- The Open Source Software Community: The engineers behind Next.js, Express, Mongoose, and Zustand for empowering self-contained full-stack product iteration loops.
 
 This project continues to evolve as new features, cloud infrastructure improvements, DevOps practices, and AI capabilities are added.
 
