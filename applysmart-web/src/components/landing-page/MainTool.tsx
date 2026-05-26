@@ -15,17 +15,32 @@ export function MainTool({ onOptimizationSuccess, onStartAnalyzing, onOptimizati
   // Get user from auth store
   const {user} = useAuthStore();
 
-  // CV text state
-  const [cvText, setCvText] = useState<string>("");
+  // CV text state - Initialized safely from localStorage
+  const [cvText, setCvText] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("applysmart_cv_text") || "";
+    }
+    return "";
+  });
 
-  // Job description state
-  const [jobDescription, setJobDescription] = useState<string>("")
+  // Job description state - Initialized safely from localStorage
+  const [jobDescription, setJobDescription] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("applysmart_job_description") || "";
+    }
+    return "";
+  });
 
   // Optimizing state
   const [isOptimizing, setIsOptimizing] = useState<boolean>(false);
 
-  // File name state
-  const [fileName, setFileName] = useState<string | null>(null);
+  // File name state - Initialized safely from localStorage
+  const [fileName, setFileName] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("applysmart_file_name");
+    }
+    return null;
+  });
 
   // Track the actual raw file
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -33,35 +48,43 @@ export function MainTool({ onOptimizationSuccess, onStartAnalyzing, onOptimizati
   // Drag over state
   const [dragOver, setDragOver] = useState(false);
 
-  // Check for input values
-  const hasInputValues = (cvText.trim().length > 0 || selectedFile !== null) && jobDescription.trim().length > 0;
+  // Check for input values (Including checking fileName to allow re-attachment flow)
+  const hasInputValues = (cvText.trim().length > 0 || selectedFile !== null || fileName !== null) && jobDescription.trim().length > 0;
 
   // File input ref
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // 🚀 Helper sync state utilities
+  const handleCvTextChange = (value: string) => {
+    setCvText(value);
+    localStorage.setItem("applysmart_cv_text", value);
+  };
+
+  const handleJobDescChange = (value: string) => {
+    setJobDescription(value);
+    localStorage.setItem("applysmart_job_description", value);
+  };
+
   // Function to handle file upload
   const handleFileUpload = useCallback((file: File) => {
-    // Set file name
     setFileName(file.name);
+    setSelectedFile(file);
+    
+    // 🚀 Cache filename string profile
+    localStorage.setItem("applysmart_file_name", file.name);
 
-    // Set selected file to file uploaded
-    setSelectedFile(file)
-
-    // If it's a plain text file .txt
     if (file.type === "text/plain") {
-      // Create reader 
       const reader = new FileReader();
       reader.onload = (e) => {
         if (typeof e.target?.result === "string") {
-          // Set cv text to results of text file
-          setCvText(e.target.result);
+          handleCvTextChange(e.target.result);
         }
       };
       reader.readAsText(file);
     } else {
-      // For .pdf or .docx files
-      setCvText(""); // Clear previous cv text
-      // Toast success
+      // Clear manual text field cache since file takes structural precedent
+      setCvText("");
+      localStorage.removeItem("applysmart_cv_text");
       toast.success(`${file.name} attached!`, {
         description: "Our server will extract the text directly during optimization."
       });
@@ -73,16 +96,21 @@ export function MainTool({ onOptimizationSuccess, onStartAnalyzing, onOptimizati
     e.preventDefault();
     setDragOver(false);
     const file = e.dataTransfer.files[0];
-      if (file) handleFileUpload(file);
+    if (file) handleFileUpload(file);
   }, [handleFileUpload])
 
   // Function to handle file clearing
   const handleClearFile = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation(); // Avoid triggering parent click trigger
+    e.stopPropagation(); 
     setFileName(null);
     setSelectedFile(null);
     setCvText("");
-    if (fileInputRef.current) fileInputRef.current.value = ""; // Reset file input target 
+    
+    // 🚀 Clear local storage items completely
+    localStorage.removeItem("applysmart_file_name");
+    localStorage.removeItem("applysmart_cv_text");
+    
+    if (fileInputRef.current) fileInputRef.current.value = ""; 
   }, [])
 
   // Function to handle optimization
@@ -90,25 +118,29 @@ export function MainTool({ onOptimizationSuccess, onStartAnalyzing, onOptimizati
     // If not logged in
     if (!user) {
       toast.error("Please sign in or create an account to optimize your CV.", {
-          description: "We'll save your analysis metrics straight to your profile."
+          description: "Don't worry, we've saved your progress so you can pick right back up!"
       });
       router.push("/signin");
       return;
     }
 
-    // If not input values
+    // Guard: If filename was cached from a past session but the browser file buffer is empty
+    if (fileName && !selectedFile && cvText.trim().length === 0) {
+      toast.error("Please re-attach your resume file.", {
+        description: "For data security reasons, files must be re-selected after returning."
+      });
+      return;
+    }
+
     if (!hasInputValues) {
       toast.error("Please provide both your CV details and the target job description.");
       return;
     }
 
-    // Set optimizing state to true
-    onStartAnalyzing(); // Start analyzing view
+    onStartAnalyzing(); 
     setIsOptimizing(true);
 
-    // API call
     try {
-        // Call optimize function
         const response = await sendCvForOptimization({
           jobDescription, 
           cvText: selectedFile ? undefined : cvText, 
@@ -117,16 +149,17 @@ export function MainTool({ onOptimizationSuccess, onStartAnalyzing, onOptimizati
 
         if (response.success) {
           toast.success("CV Analysis Complete!");
-          // Fire callback to swap the view state up inside LandingPage
+          
+          // 🚀 Clean up localStorage on complete successful request cycle
+          localStorage.removeItem("applysmart_cv_text");
+          localStorage.removeItem("applysmart_job_description");
+          localStorage.removeItem("applysmart_file_name");
+
           onOptimizationSuccess(response.data);
         }
-
-        console.log(response)
     } catch (err: any) {
         toast.error(err?.message || "Analysis pipeline failed. Please retry.");
         setIsOptimizing(false);
-
-        // Call handle error function
         onOptimizationFailure()
     } finally {
         setIsOptimizing(false);
@@ -175,7 +208,7 @@ export function MainTool({ onOptimizationSuccess, onStartAnalyzing, onOptimizati
                         {fileName}
                       </p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        Ready for extraction — click to swap
+                        {selectedFile ? "Ready for extraction — click to swap" : "Click to re-attach file asset"}
                       </p>
                     </div>
                     <button 
@@ -202,10 +235,8 @@ export function MainTool({ onOptimizationSuccess, onStartAnalyzing, onOptimizati
             {/* Text area */}
             <textarea
               value={cvText}
-              disabled={!!selectedFile} // Disable if file is uploaded
-              onChange={(e) => {
-                setCvText(e.target.value);
-              }}
+              disabled={!!selectedFile} 
+              onChange={(e) => handleCvTextChange(e.target.value)}
               placeholder={
                 selectedFile 
                   ? "Using uploaded file content for text extraction..." 
@@ -225,7 +256,7 @@ export function MainTool({ onOptimizationSuccess, onStartAnalyzing, onOptimizati
             </p>
             <textarea
               value={jobDescription}
-              onChange={(e) => setJobDescription(e.target.value)}
+              onChange={(e) => handleJobDescChange(e.target.value)}
               placeholder="Paste the full job description — include responsibilities, requirements, and any skills listed. More detail gives better results."
               className="flex-1 min-h-80 w-full bg-card border border-border rounded-xl px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:border-primary/30 transition-colors duration-150"
             />
