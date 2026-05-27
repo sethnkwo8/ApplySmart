@@ -3,10 +3,13 @@
 
 import { User, LogOut, ChevronDown, LayoutDashboard } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { ProfileDropdownProps } from "@/types/landingpage";
 
 export function ProfileDropdown({user, logout}: ProfileDropdownProps) {
     const [isOpen, setIsOpen] = useState<boolean>(false);
+
+    const router = useRouter()
     
     // Reference boundary for dropdown element
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -59,7 +62,8 @@ export function ProfileDropdown({user, logout}: ProfileDropdownProps) {
                     <div className="py-1">
                         <button
                             onClick={() => {
-                            setIsOpen(false);
+                            setIsOpen(false)
+                            router.push("/dashboard")
                             }}
                             className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all duration-150"
                         >
