@@ -35,6 +35,7 @@ export interface LearningResources {
 export interface OptimizedResultData {
     atsScore: number;       // 🚀 Matches optimizationReport.atsScore
     summary: string;        // 🚀 Matches optimizationReport.summary
+    optimizedCvMarkdown: string; // 🚀 Matches optimizationReport.optimizedCvMarkdown
     detectedSkills: MappedSkill[]; // 🚀 Matches optimizationReport.detectedSkills
     missingSkills: MappedSkill[]; // 🚀 Matches optimizationReport.missingSkills
     learningResources: LearningResources[] // 🚀 Matches optimizationReport.learningResources
