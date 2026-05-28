@@ -14,8 +14,14 @@ export async function optimizeCV(cvText: string, jobDescription: string) {
     }
 
     // User prompt
-    const userPrompt = `
-    === CANDIDATE CV TEXT ===
+    const userPrompt = `You are tasked with completely rewriting and optimizing the candidate's CV to maximize its alignment with the target job description.
+
+    === STRATEGIC INSTRUCTIONS ===
+    1. Retain all genuine employment dates, company names, educational degrees, and certifications present in the Candidate CV Text. Do not invent new workplaces or credentials.
+    2. Optimize the bullet points under the professional experience section: use strong action verbs, quantify achievements where possible, and contextually integrate the missing core skills.
+    3. Restructure the final layout into a highly scannable, elegant, professional resume written in clean Markdown.
+
+    === CANDIDATE ORIGINAL CV TEXT (CONTAINS EXPERIENCES, EDUCATION & CERTIFICATIONS) ===
     ${cvText}
 
     === TARGET JOB DESCRIPTION ===
@@ -35,6 +41,10 @@ export async function optimizeCV(cvText: string, jobDescription: string) {
                     properties: {
                         atsScore: { type: "INTEGER", description: "Match score from 0 to 100" },
                         summary: { type: "STRING" },
+                        optimizedCvMarkdown: { 
+                            type: "STRING", 
+                            description: "The complete tailored CV rewritten in clean Markdown format. Include professional headers, formatted bullet points, an updated skills section reflecting detected targets, and contextually aligned professional experience descriptions." 
+                        },
                         detectedSkills: {
                             type: "ARRAY",
                             items: {
@@ -62,7 +72,7 @@ export async function optimizeCV(cvText: string, jobDescription: string) {
                             }
                         }
                     },
-                    required: ["atsScore", "summary", "detectedSkills", "missingSkills"]
+                    required: ["atsScore", "summary", "optimizedCvMarkdown", "detectedSkills", "missingSkills"]
                 }
             }
         });
@@ -182,6 +192,7 @@ export async function createOptimizationReport(input: IReportInput) {
         optimizationReport.jobDescription = input.jobDescription;
         optimizationReport.atsScore = aiResult.atsScore;
         optimizationReport.summary = aiResult.summary;
+        optimizationReport.optimizedCvMarkdown = aiResult.optimizedCvMarkdown;
         optimizationReport.detectedSkills = mappedDetectedSkills;
         optimizationReport.missingSkills = mappedMissingSkills;
         optimizationReport.learningResources = aggregatedLearningResources;
