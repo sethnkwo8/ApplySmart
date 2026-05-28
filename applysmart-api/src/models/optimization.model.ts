@@ -38,6 +38,7 @@ export interface IOptimized extends Document {
     jobDescription: string;
     atsScore: number;
     summary: string;
+    optimizedCvMarkdown: string;
     missingSkills: IMatchedSkill[];
     detectedSkills: IMatchedSkill[];
     learningResources: ISkillLearningPath[];
@@ -84,6 +85,10 @@ const optimizedSchema = new Schema<IOptimized>({
         max: 100
     },
     summary: {
+        type: String,
+        required: false
+    },
+    optimizedCvMarkdown: {
         type: String,
         required: false
     },
