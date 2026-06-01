@@ -1,5 +1,5 @@
 export const skillsData = [
-  // Technology
+  // Technology - Core Frontend & Languages
   { 
     name: "react", 
     category: "Technology", 
@@ -48,6 +48,8 @@ export const skillsData = [
     importanceWeight: "high", 
     learningResources: [{ title: "Python.org Tutorial", url: "https://docs.python.org/3/tutorial/" }] 
   },
+
+  // Technology - Backend Frameworks & APIs
   { 
     name: "django", 
     category: "Technology", 
@@ -73,9 +75,35 @@ export const skillsData = [
     learningResources: [{ title: "Express Guide", url: "https://expressjs.com/" }] 
   },
   { 
+    name: "nestjs", 
+    category: "Technology", 
+    aliases: ["nest"], 
+    suggestion: "Add NestJS experience if you have developed scalable, enterprise-grade Node.js server architectures.", 
+    importanceWeight: "high", 
+    learningResources: [{ title: "NestJS Documentation", url: "https://docs.nestjs.com/" }] 
+  },
+  { 
+    name: "rest api", 
+    category: "Technology", 
+    aliases: ["restful api", "rest", "apis"], 
+    suggestion: "Add REST API experience if you have designed or consumed web services using HTTP methods.", 
+    importanceWeight: "high", 
+    learningResources: [{ title: "RestfulApi.net", url: "https://restfulapi.net/" }] 
+  },
+  { 
+    name: "graphql", 
+    category: "Technology", 
+    aliases: ["apollo"], 
+    suggestion: "Add GraphQL experience if you have used query languages to optimize data fetching in APIs.", 
+    importanceWeight: "medium", 
+    learningResources: [{ title: "Intro to GraphQL", url: "https://graphql.org/learn/" }] 
+  },
+
+  // Technology - Databases & ORMs
+  { 
     name: "mongodb", 
     category: "Technology", 
-    aliases: ["mongo"], 
+    aliases: ["mongo", "mongoose"], 
     suggestion: "Add MongoDB experience if you have managed NoSQL databases or document-oriented data.", 
     importanceWeight: "medium", 
     learningResources: [{ title: "MongoDB University", url: "https://university.mongodb.com/" }] 
@@ -83,7 +111,7 @@ export const skillsData = [
   { 
     name: "postgresql", 
     category: "Technology", 
-    aliases: ["postgres"], 
+    aliases: ["postgres", "pg"], 
     suggestion: "Add PostgreSQL experience if you have worked with relational databases and complex SQL queries.", 
     importanceWeight: "medium", 
     learningResources: [{ title: "Postgres Tutorial", url: "https://www.postgresqltutorial.com/" }] 
@@ -97,18 +125,52 @@ export const skillsData = [
     learningResources: [{ title: "MySQL Docs", url: "https://dev.mysql.com/doc/" }] 
   },
   { 
+    name: "sqlite", 
+    category: "Technology", 
+    aliases: ["sqlite3"], 
+    suggestion: "Add SQLite experience if you have integrated lightweight embedded relational storage engines.", 
+    importanceWeight: "medium", 
+    learningResources: [{ title: "SQLite Tutorial", url: "https://www.sqlitetutorial.net/" }] 
+  },
+  { 
+    name: "prisma", 
+    category: "Technology", 
+    aliases: ["prisma orm"], 
+    suggestion: "Add Prisma experience if you have implemented type-safe database schemas and queries.", 
+    importanceWeight: "medium", 
+    learningResources: [{ title: "Prisma Documentation", url: "https://www.prisma.io/docs" }] 
+  },
+  { 
+    name: "redis", 
+    category: "Technology", 
+    aliases: ["caching"], 
+    suggestion: "Add Redis experience if you have implemented distributed caching or real-time pub/sub data stores.", 
+    importanceWeight: "low", 
+    learningResources: [{ title: "Redis University", url: "https://university.redis.com/" }] 
+  },
+
+  // Technology - Cloud & DevOps
+  { 
     name: "docker", 
     category: "Technology", 
-    aliases: [], 
-    suggestion: "Add Docker experience if you have worked with containerization and microservices.", 
+    aliases: ["containers", "containerization"], 
+    suggestion: "Add Docker experience if you have worked with containerization and isolating software lifecycles.", 
     importanceWeight: "medium", 
     learningResources: [{ title: "Docker Docs", url: "https://docs.docker.com/" }] 
   },
   { 
+    name: "kubernetes", 
+    category: "Technology", 
+    aliases: ["k8s", "kube", "orchestration"], 
+    suggestion: "Add Kubernetes experience if you have managed container orchestration, deployments, and cluster autoscaling.", 
+    importanceWeight: "medium", 
+    learningResources: [{ title: "Kubernetes Basics", url: "https://kubernetes.io/docs/tutorials/kubernetes-basics/" }] 
+  },
+  { 
     name: "aws", 
     category: "Technology", 
-    aliases: ["amazon web services"], 
-    suggestion: "Add AWS experience if you have deployed applications using cloud infrastructure services.", 
+    aliases: ["amazon web services", "s3", "ec2"], 
+    suggestion: "Add AWS experience if you have deployed scalable infrastructure using cloud ecosystems.", 
     importanceWeight: "medium", 
     learningResources: [{ title: "AWS Skill Builder", url: "https://explore.skillbuilder.aws/" }] 
   },
@@ -123,44 +185,76 @@ export const skillsData = [
   { 
     name: "git", 
     category: "Technology", 
-    aliases: [], 
-    suggestion: "Add Git experience if you have used version control to manage code changes and collaboration.", 
+    aliases: ["version control"], 
+    suggestion: "Add Git experience if you have used version control to manage delta branches and code review collaboration.", 
     importanceWeight: "high", 
     learningResources: [{ title: "Pro Git Book", url: "https://git-scm.com/book/en/v2" }] 
   },
   { 
     name: "github", 
     category: "Technology", 
-    aliases: [], 
-    suggestion: "Add GitHub experience if you have managed repositories, Pull Requests, or CI/CD workflows.", 
+    aliases: ["github actions", "ci/cd"], 
+    suggestion: "Add GitHub experience if you have managed repositories, opened Pull Requests, or configured automated CI/CD pipelines.", 
     importanceWeight: "medium", 
-    learningResources: [{ title: "GitHub Skills", url: "https://skills.github.com/" }] 
+    learningResources: [{ title: "GitHub Skills Training", url: "https://skills.github.com/" }] 
+  },
+  // Project Management & Software Workflows
+  { 
+    name: "code reviews", 
+    category: "Project Management", 
+    aliases: ["code review", "peer review", "pr review"], 
+    suggestion: "Incorporate code review experience to highlight your capabilities in asserting codebase quality and collaborating with engineers.", 
+    importanceWeight: "medium", 
+    learningResources: [{ title: "Google Engineering: Code Review Guide", url: "https://google.github.io/eng-practices/review/" }] 
   },
   { 
-    name: "rest api", 
-    category: "Technology", 
-    aliases: ["restful api"], 
-    suggestion: "Add REST API experience if you have designed or consumed web services using HTTP methods.", 
+    name: "technical documentation", 
+    category: "Project Management", 
+    aliases: ["documentation", "api documentation", "swagger", "openapi"], 
+    suggestion: "Highlight experience drafting clear documentation, API schemas, or system architectural manuals.", 
+    importanceWeight: "medium", 
+    learningResources: [{ title: "Diátaxis Framework for Docs", url: "https://diataxis.fr/" }] 
+  },
+  { 
+    name: "agile", 
+    category: "Project Management", 
+    aliases: ["kanban", "iterative development"], 
+    suggestion: "Add Agile experience if you have worked in flexible, iterative milestone cycles.", 
     importanceWeight: "high", 
-    learningResources: [{ title: "RestfulApi.net", url: "https://restfulapi.net/" }] 
+    learningResources: [{ title: "Agile Alliance 101", url: "https://www.agilealliance.org/agile101/" }] 
   },
   { 
-    name: "graphql", 
-    category: "Technology", 
-    aliases: [], 
-    suggestion: "Add GraphQL experience if you have used query languages to optimize data fetching in APIs.", 
+    name: "scrum", 
+    category: "Project Management", 
+    aliases: ["sprints", "daily standups"], 
+    suggestion: "Add Scrum experience if you have participated in agile sprint rituals or standups.", 
+    importanceWeight: "high", 
+    learningResources: [{ title: "Scrum.org Resources", url: "https://www.scrum.org/resources/what-is-scrum" }] 
+  },
+  { 
+    name: "jira", 
+    category: "Project Management", 
+    aliases: ["atlassian", "confluence"], 
+    suggestion: "Add Jira experience if you have managed tickets, boards, or sprint tracking frameworks.", 
     importanceWeight: "medium", 
-    learningResources: [{ title: "Intro to GraphQL", url: "https://graphql.org/learn/" }] 
+    learningResources: [{ title: "Atlassian Jira Guides", url: "https://www.atlassian.com/software/jira/guides" }] 
   },
   { 
-    name: "redis", 
-    category: "Technology", 
-    aliases: [], 
-    suggestion: "Add Redis experience if you have implemented caching or real-time data stores.", 
-    importanceWeight: "low", 
-    learningResources: [{ title: "Redis University", url: "https://university.redis.com/" }] 
+    name: "leadership", 
+    category: "Project Management", 
+    aliases: ["team management", "mentoring"], 
+    suggestion: "Add Leadership experience if you have coordinated milestones or mentored engineers.", 
+    importanceWeight: "high", 
+    learningResources: [{ title: "MindTools Leadership Frameworks", url: "https://www.mindtools.com/pages/article/newLDR_41.htm" }] 
   },
-
+  { 
+    name: "stakeholder management", 
+    category: "Project Management", 
+    aliases: ["client relations", "product management"], 
+    suggestion: "Add Stakeholder Management experience if you have balanced client or organizational milestones.", 
+    importanceWeight: "medium", 
+    learningResources: [{ title: "PMI Stakeholder Strategy Guide", url: "https://www.pmi.org/learning/library/stakeholder-management-task-project-success-2568" }] 
+  },
   // Finance
   { 
     name: "financial analysis", 
@@ -354,58 +448,6 @@ export const skillsData = [
     importanceWeight: "high", 
     learningResources: [
       { title: "Interaction Design Foundation - UX Courses", url: "https://www.interaction-design.org/courses" }
-    ] 
-  },
-
-  // Project Management
-  { 
-    name: "agile", 
-    category: "Project Management", 
-    aliases: ["kanban", "iterative development"], 
-    suggestion: "Add Agile experience if you have worked in flexible, iterative cycles to deliver project milestones and adapt to changing requirements.", 
-    importanceWeight: "high", 
-    learningResources: [
-      { title: "Agile Alliance: Agile 101", url: "https://www.agilealliance.org/agile101/" }
-    ] 
-  },
-  { 
-    name: "scrum", 
-    category: "Project Management", 
-    aliases: ["sprints", "daily standups"], 
-    suggestion: "Add Scrum experience if you have participated in sprints, daily standups, or played the role of a Scrum Master or Product Owner.", 
-    importanceWeight: "high", 
-    learningResources: [
-      { title: "Scrum.org: What is Scrum?", url: "https://www.scrum.org/resources/what-is-scrum" }
-    ] 
-  },
-  { 
-    name: "jira", 
-    category: "Project Management", 
-    aliases: ["atlassian", "confluence"], 
-    suggestion: "Add Jira experience if you have used project tracking tools to manage backlogs, track issues, or monitor team velocity.", 
-    importanceWeight: "medium", 
-    learningResources: [
-      { title: "Atlassian: Jira Guide for Beginners", url: "https://www.atlassian.com/software/jira/guides/use-cases/project-management" }
-    ] 
-  },
-  { 
-    name: "leadership", 
-    category: "Project Management", 
-    aliases: ["team management", "mentoring"], 
-    suggestion: "Add Leadership experience if you have managed teams, mentored colleagues, or taken ownership of high-level project goals.", 
-    importanceWeight: "high", 
-    learningResources: [
-      { title: "MindTools: Leadership Skills", url: "https://www.mindtools.com/pages/article/newLDR_41.htm" }
-    ] 
-  },
-  { 
-    name: "stakeholder management", 
-    category: "Project Management", 
-    aliases: ["client relations", "stakeholder engagement"], 
-    suggestion: "Add Stakeholder Management experience if you have balanced the expectations of clients, executives, or other parties involved in a project.", 
-    importanceWeight: "medium", 
-    learningResources: [
-      { title: "PMI: Stakeholder Management Guide", url: "https://www.pmi.org/learning/library/stakeholder-management-task-project-success-2568" }
     ] 
   },
 
