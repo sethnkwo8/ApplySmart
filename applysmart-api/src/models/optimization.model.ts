@@ -45,6 +45,8 @@ export interface IOptimized extends Document {
     optimizationStatus: OptimizationStatus;
     processingTimeMs?: number;
     modelUsed?: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const optimizedSchema = new Schema<IOptimized>({
