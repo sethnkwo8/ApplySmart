@@ -1,6 +1,6 @@
 // Optimized results view
 import { OptimizedResultProps } from "@/types/optimize"
-import { RotateCcw, Download , ExternalLink, BookOpen, X, Check, Eye} from "lucide-react"
+import { RotateCcw, Download , ExternalLink, BookOpen, X, Check, Eye, AlertTriangle} from "lucide-react"
 import { useRef } from "react";
 import ReactMarkdown from "react-markdown";
 
@@ -133,6 +133,22 @@ export function OptimizedResults({data, onReset}: OptimizedResultProps) {
                     <Eye size={14} className="text-primary" />
                     <p className="text-xs font-mono uppercase tracking-widest">Optimized Resume Draft Preview</p>
                   </div>
+
+                  {/* Advisory Notice Banner */}
+                  <div className="flex gap-3 bg-amber-500/5 border border-amber-500/10 rounded-2xl p-4">
+                    <div className="mt-0.5 text-amber-400 shrink-0">
+                      <AlertTriangle size={16} />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-medium text-amber-400 font-mono uppercase tracking-wider mb-1">
+                        Review Required
+                      </h4>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        This document has been tailored using AI models to cross-reference keywords. Treat this copy as a **strategic draft layout guide**. Always double-check metrics, dates, and phrasing accuracy to ensure everything accurately represents your absolute true experience before applying.
+                      </p>
+                    </div>
+                  </div>
+
                   <div className="w-full bg-card border border-border rounded-2xl overflow-hidden shadow-inner p-1 sm:p-4">
                     <div 
                       ref={cvPreviewRef}
@@ -201,36 +217,39 @@ export function OptimizedResults({data, onReset}: OptimizedResultProps) {
             )}
 
             {/* Learning Resources */}
-            {data.learningResources && data.learningResources.length > 0 && (
-                <div className="bg-card border border-border rounded-2xl p-6">
-                    <div className="flex items-center gap-2 mb-5">
-                      <BookOpen size={14} className="text-primary" />
-                      <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">Learning Resources</p>
+{data.learningResources && data.learningResources.length > 0 && (
+    <div className="bg-card border border-border rounded-2xl p-6">
+        <div className="flex items-center gap-2 mb-5">
+          <BookOpen size={14} className="text-primary" />
+          <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">Learning Resources</p>
+        </div>
+        <div className="space-y-6">
+          {data.learningResources.map((resource) => (
+            <div key={resource.skillName} className="border-b border-border/30 last:border-none pb-5 last:pb-0">
+              
+              {/* Refactored heading for clarity */}
+              <h4 className="text-sm font-medium text-foreground mb-3">
+                Skills to acquire or highlight: <span className="text-primary capitalize">{resource.skillName}</span>
+              </h4>
+              
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {resource.resources.map((link, idx) => (
+                  <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 rounded-xl border border-border bg-background/40 hover:border-primary/40 transition-all duration-200 group">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <BookOpen size={13} className="text-primary" />
+                      </div>
+                      <p className="text-xs font-medium text-foreground group-hover:text-primary truncate">{link.title}</p>
                     </div>
-                    <div className="space-y-6">
-                      {data.learningResources.map((resource) => (
-                        <div key={resource.skillName} className="border-b border-border/30 last:border-none pb-5 last:pb-0">
-                          <h4 className="text-sm font-medium text-foreground mb-3">
-                            Bridging Gap: <span className="text-primary capitalize">{resource.skillName}</span>
-                          </h4>
-                          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                            {resource.resources.map((link, idx) => (
-                              <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 rounded-xl border border-border bg-background/40 hover:border-primary/40 transition-all duration-200 group">
-                                <div className="flex items-center gap-3 min-w-0">
-                                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                                    <BookOpen size={13} className="text-primary" />
-                                  </div>
-                                  <p className="text-xs font-medium text-foreground group-hover:text-primary truncate">{link.title}</p>
-                                </div>
-                                <ExternalLink size={12} className="text-muted-foreground/60 group-hover:text-primary shrink-0 ml-2" />
-                              </a>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                </div>
-            )}
+                    <ExternalLink size={12} className="text-muted-foreground/60 group-hover:text-primary shrink-0 ml-2" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+    </div>
+)}
         </div>
     )
 }
