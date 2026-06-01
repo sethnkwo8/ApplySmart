@@ -7,7 +7,7 @@ export const metadata: Metadata = {
         template: "%s || ApplySmart", // %s is used as a placeholder
         default: "Dashboard || ApplySmart",
     },
-    description: "",
+    description: "Your centralized workspace for AI-powered resume parsing, historical ATS matching analytics, and personalized technical skill roadmaps.",
 }
 
 export default function DashboardLayout({
@@ -16,8 +16,8 @@ export default function DashboardLayout({
     children: React.ReactNode
 }) {
     return (
-        <div className="min-h-screen bg-background text-foreground font-sans overflow-x-hidden">
+        <main>
             {children}
-        </div>
+        </main>
     )
 }
