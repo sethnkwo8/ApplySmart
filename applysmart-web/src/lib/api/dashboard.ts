@@ -19,3 +19,24 @@ export async function fetchDashboardData(page: number = 1, limit: number = 5) {
 
     return data
 }
+
+// GET API function for single dashboard data
+export async function fetchSingleDashboardData(id: string) {
+    const apiURL = process.env.NEXT_PUBLIC_API_URL;
+
+    const res = await fetch(`${apiURL}/dashboard/${id}`, {
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include"
+    })
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        throw data
+    }
+
+    return data
+}
+
