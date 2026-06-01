@@ -1,6 +1,9 @@
 // Optimized results view
 import { OptimizedResultProps } from "@/types/optimize"
-import { RotateCcw, Download , ExternalLink, BookOpen, X, Check} from "lucide-react"
+import { RotateCcw, Download , ExternalLink, BookOpen, X, Check, Eye} from "lucide-react"
+import { useRef } from "react";
+import ReactMarkdown from "react-markdown";
+
 export function OptimizedResults({data, onReset}: OptimizedResultProps) {
     const radius = 56;
     const circumference = 2 * Math.PI * radius;
@@ -8,12 +11,37 @@ export function OptimizedResults({data, onReset}: OptimizedResultProps) {
     const matchScore = data.atsScore ?? 0;
     const scoreStatus = matchScore >= 80 ? "Strong match" : matchScore >= 60 ? "Good match" : "Needs work";
 
+    // Ref for cvPreview div
+    const cvPreviewRef = useRef<HTMLDivElement>(null)
+
     // Helper utility to style semantic importance badges dynamically
     const getWeightStyles = (weight: "low" | "medium" | "high") => {
         switch(weight) {
         case "high": return "bg-rose-500/10 text-rose-400 border-rose-500/20";
         case "medium": return "bg-amber-500/10 text-amber-400 border-amber-500/20";
         default: return "bg-blue-500/10 text-blue-400 border-blue-500/20";
+        }
+    };
+
+    // Function to handle cv export
+    const handleExportPDF = async () => {
+      // Lazy loading library only if user clicks export
+        const html2pdf = (await import("html2pdf.js")).default;
+        // Set element to the cvPreview ref
+        const element = cvPreviewRef.current;
+        
+        // Options for pdf 
+        const options = {
+            margin:       [12, 15, 12, 15] as [number, number, number, number],
+            filename:     `Optimized_Resume_${matchScore}Score.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+            jsPDF:        { unit: 'mm', format: 'letter', orientation: 'portrait' }
+        };
+
+        // If cvPreview element exists set options and download
+        if (element) {
+            html2pdf().set(options as any).from(element).save();
         }
     };
 
@@ -37,7 +65,7 @@ export function OptimizedResults({data, onReset}: OptimizedResultProps) {
                   <RotateCcw size={13} />
                   <span className="hidden sm:inline">Start over</span>
                 </button>
-                <button className="flex items-center gap-2 px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors duration-150">
+                <button onClick={handleExportPDF} className="flex items-center gap-2 px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors duration-150">
                   <Download size={13} />
                   Export CV
                 </button>
@@ -96,116 +124,113 @@ export function OptimizedResults({data, onReset}: OptimizedResultProps) {
               </div>
             </div>
 
-            {/* Skills Detected */}
-            <div className="bg-card border border-border rounded-2xl p-6 mb-4">
-              <div className="flex items-center gap-2 mb-4">
-                <Check size={14} className="text-primary" />
-                <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-                  Detected Core Skills ({data.detectedSkills?.length ?? 0})
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                    {data.detectedSkills?.map((skill) => (
-                    <div
-                        key={skill.skillName}
-                        className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-xl bg-primary/5 text-foreground border border-border/60"
+            {data.optimizedCvMarkdown && (
+              <div className="grid lg:grid-cols-[1fr_24rem] gap-4 mb-4 items-start">
+                
+                {/* The Live CV Preview */}
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2 px-1 text-muted-foreground">
+                    <Eye size={14} className="text-primary" />
+                    <p className="text-xs font-mono uppercase tracking-widest">Optimized Resume Draft Preview</p>
+                  </div>
+                  <div className="w-full bg-card border border-border rounded-2xl overflow-hidden shadow-inner p-1 sm:p-4">
+                    <div 
+                      ref={cvPreviewRef}
+                      className="bg-white text-slate-900 rounded-xl p-8 font-sans max-w-204 mx-auto overflow-x-auto
+                                prose prose-sm prose-headings:font-semibold prose-headings:mb-2 prose-headings:mt-4 
+                                prose-p:leading-relaxed prose-ul:my-2 prose-li:my-0.5"
+                      style={{
+                        backgroundColor: '#ffffff',
+                        color: '#0f172a',
+                        ['--tw-prose-headings' as any]: '#0f172a',
+                        ['--tw-prose-body' as any]: '#334155',
+                        ['--tw-prose-bold' as any]: '#0f172a',
+                        ['--tw-prose-bullets' as any]: '#cbd5e1',
+                      }}
                     >
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                        <span className="font-medium">{skill.skillName}</span>
-                        <span className={`text-[10px] uppercase font-mono px-1.5 py-0.5 rounded border ${getWeightStyles(skill.importanceWeight)}`}>
-                        {skill.importanceWeight}
-                        </span>
+                      <ReactMarkdown>{data.optimizedCvMarkdown}</ReactMarkdown>
                     </div>
-                    ))}
+                  </div>
                 </div>
-            </div>
 
-            {/* Missing Skills */}
-            <div className="bg-card border border-border rounded-2xl p-6 mb-4">
-              <div className="flex items-center gap-2 mb-4">
-                <X size={14} className="text-rose-400" />
-                <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-                  Missing Skills ({data.missingSkills?.length ?? 0})
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {data.missingSkills?.map((skill) => (
-                  <div
-                        key={skill.skillName}
-                        className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-xl bg-primary/5 text-foreground border border-border/60"
-                    >
-                        <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
-                        <span className="font-medium">{skill.skillName}</span>
-                        <span className={`text-[10px] uppercase font-mono px-1.5 py-0.5 rounded border ${getWeightStyles(skill.importanceWeight)}`}>
-                        {skill.importanceWeight}
-                        </span>
+                <div className="flex flex-col gap-4">
+                  {/* Detected Skills Widget */}
+                  <div className="bg-card border border-border rounded-2xl p-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Check size={14} className="text-primary" />
+                      <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">Detected Core Skills</p>
                     </div>
-                ))}
+                    <div className="flex flex-col gap-2">
+                      {data.detectedSkills?.map((skill) => (
+                        <div key={skill.skillName} className="flex items-center justify-between gap-2 p-2 rounded-xl bg-muted/40 border border-border/40">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                            <span className="text-xs font-medium text-foreground truncate">{skill.skillName}</span>
+                          </div>
+                          <span className={`text-[9px] uppercase font-mono px-2 py-0.5 rounded border shrink-0 ${getWeightStyles(skill.importanceWeight)}`}>
+                            {skill.importanceWeight}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Missing Skills Widget */}
+                  <div className="bg-card border border-border rounded-2xl p-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <X size={14} className="text-rose-400" />
+                      <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">Missing Core Skills</p>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      {data.missingSkills?.map((skill) => (
+                        <div key={skill.skillName} className="flex items-center justify-between gap-2 p-2 rounded-xl bg-rose-500/5 border border-rose-500/10">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="w-1.5 h-1.5 rounded-full bg-rose-400 shrink-0" />
+                            <span className="text-xs font-medium text-foreground truncate">{skill.skillName}</span>
+                          </div>
+                          <span className={`text-[9px] uppercase font-mono px-2 py-0.5 rounded border shrink-0 ${getWeightStyles(skill.importanceWeight)}`}>
+                            {skill.importanceWeight}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Learning Resources */}
-            <div className="bg-card border border-border rounded-2xl p-6">
-              <div className="flex items-center gap-2 mb-5">
-                <BookOpen size={14} className="text-primary" />
-                <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-                  Learning Resources
-                </p>
-              </div>
-              <div className="space-y-5">
-                {/* Learning Resources */}
-                {data.learningResources && data.learningResources.length > 0 && (
+            {data.learningResources && data.learningResources.length > 0 && (
                 <div className="bg-card border border-border rounded-2xl p-6">
                     <div className="flex items-center gap-2 mb-5">
-                    <BookOpen size={14} className="text-primary" />
-                    <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-                        Learning Resources
-                    </p>
+                      <BookOpen size={14} className="text-primary" />
+                      <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">Learning Resources</p>
                     </div>
                     <div className="space-y-6">
-                    {data.learningResources.map((resource) => (
+                      {data.learningResources.map((resource) => (
                         <div key={resource.skillName} className="border-b border-border/30 last:border-none pb-5 last:pb-0">
-                        <h4 className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                            Bridging Knowledge Gap: <span className="text-primary capitalize">{resource.skillName}</span>
-                        </h4>
-                        {/* Responsive columns grid for resources layout */}
-                        <div className="grid sm:grid-cols-2 gap-3">
+                          <h4 className="text-sm font-medium text-foreground mb-3">
+                            Bridging Gap: <span className="text-primary capitalize">{resource.skillName}</span>
+                          </h4>
+                          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                             {resource.resources.map((link, idx) => (
-                            <a
-                                key={idx}
-                                href={link.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center justify-between p-3 rounded-xl border border-border bg-background/40 hover:border-primary/40 hover:bg-muted/20 transition-all duration-200 group"
-                            >
+                              <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 rounded-xl border border-border bg-background/40 hover:border-primary/40 transition-all duration-200 group">
                                 <div className="flex items-center gap-3 min-w-0">
-                                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                                     <BookOpen size={13} className="text-primary" />
+                                  </div>
+                                  <p className="text-xs font-medium text-foreground group-hover:text-primary truncate">{link.title}</p>
                                 </div>
-                                <div className="min-w-0">
-                                    <p className="text-xs font-medium text-foreground group-hover:text-primary transition-colors truncate">
-                                    {link.title}
-                                    </p>
-                                    <p className="text-[10px] text-muted-foreground mt-0.5 uppercase tracking-wider font-mono">
-                                    Official Documentation
-                                    </p>
-                                </div>
-                                </div>
-                                <ExternalLink
-                                size={12}
-                                className="text-muted-foreground/60 group-hover:text-primary transition-colors shrink-0 ml-2"
-                                />
-                            </a>
+                                <ExternalLink size={12} className="text-muted-foreground/60 group-hover:text-primary shrink-0 ml-2" />
+                              </a>
                             ))}
+                          </div>
                         </div>
-                        </div>
-                    ))}
+                      ))}
                     </div>
                 </div>
-                )}
-              </div>
-            </div>
+            )}
         </div>
     )
 }

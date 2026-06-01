@@ -9,44 +9,47 @@ import { toast } from "sonner";
 import { sendCvForOptimization } from "@/lib/api/optimize";
 import { MainToolProps } from "@/types/landingpage";
 
+// Interface for cached inputs
+interface ICachedInputs {
+  cvText: string;
+  jobDescription: string;
+  fileName: string | null;
+}
+
 export function MainTool({ onOptimizationSuccess, onStartAnalyzing, onOptimizationFailure }: MainToolProps) {
   const router = useRouter();
 
   // Get user from auth store
   const {user} = useAuthStore();
 
-  // CV text state - Initialized safely from localStorage
-  const [cvText, setCvText] = useState<string>(() => {
+  // Initialize inputs
+  const [inputs, setInputs] = useState<ICachedInputs>(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("applysmart_cv_text") || "";
+      return {
+        cvText: localStorage.getItem("applysmart_cv_text") || "",
+        jobDescription: localStorage.getItem("applysmart_job_description") || "",
+        fileName: localStorage.getItem("applysmart_file_name"),
+      };
     }
-    return "";
-  });
-
-  // Job description state - Initialized safely from localStorage
-  const [jobDescription, setJobDescription] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("applysmart_job_description") || "";
-    }
-    return "";
+    return {
+      cvText: "",
+      jobDescription: "",
+      fileName: null,
+    };
   });
 
   // Optimizing state
   const [isOptimizing, setIsOptimizing] = useState<boolean>(false);
-
-  // File name state - Initialized safely from localStorage
-  const [fileName, setFileName] = useState<string | null>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("applysmart_file_name");
-    }
-    return null;
-  });
 
   // Track the actual raw file
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   // Drag over state
   const [dragOver, setDragOver] = useState(false);
+
+  const cvText = inputs.cvText;
+  const jobDescription = inputs.jobDescription;
+  const fileName = inputs.fileName;
 
   // Check for input values (Including checking fileName to allow re-attachment flow)
   const hasInputValues = (cvText.trim().length > 0 || selectedFile !== null || fileName !== null) && jobDescription.trim().length > 0;
@@ -56,34 +59,40 @@ export function MainTool({ onOptimizationSuccess, onStartAnalyzing, onOptimizati
 
   // 🚀 Helper sync state utilities
   const handleCvTextChange = (value: string) => {
-    setCvText(value);
+    setInputs(prev => ({ ...prev, cvText: value }));
     localStorage.setItem("applysmart_cv_text", value);
   };
 
   const handleJobDescChange = (value: string) => {
-    setJobDescription(value);
+    setInputs(prev => ({ ...prev, jobDescription: value }));
     localStorage.setItem("applysmart_job_description", value);
   };
 
   // Function to handle file upload
   const handleFileUpload = useCallback((file: File) => {
-    setFileName(file.name);
     setSelectedFile(file);
-    
-    // 🚀 Cache filename string profile
     localStorage.setItem("applysmart_file_name", file.name);
 
     if (file.type === "text/plain") {
       const reader = new FileReader();
       reader.onload = (e) => {
         if (typeof e.target?.result === "string") {
-          handleCvTextChange(e.target.result);
+          const textValue = e.target.result;
+          setInputs(prev => ({
+            ...prev,
+            fileName: file.name,
+            cvText: textValue
+          }));
+          localStorage.setItem("applysmart_cv_text", textValue);
         }
       };
       reader.readAsText(file);
     } else {
-      // Clear manual text field cache since file takes structural precedent
-      setCvText("");
+      setInputs(prev => ({
+        ...prev,
+        fileName: file.name,
+        cvText: ""
+      }));
       localStorage.removeItem("applysmart_cv_text");
       toast.success(`${file.name} attached!`, {
         description: "Our server will extract the text directly during optimization."
@@ -102,16 +111,19 @@ export function MainTool({ onOptimizationSuccess, onStartAnalyzing, onOptimizati
   // Function to handle file clearing
   const handleClearFile = useCallback((e: React.MouseEvent) => {
     e.stopPropagation(); 
-    setFileName(null);
     setSelectedFile(null);
-    setCvText("");
     
-    // 🚀 Clear local storage items completely
+    setInputs(prev => ({
+      ...prev,
+      fileName: null,
+      cvText: ""
+    }));
+    
     localStorage.removeItem("applysmart_file_name");
     localStorage.removeItem("applysmart_cv_text");
     
     if (fileInputRef.current) fileInputRef.current.value = ""; 
-  }, [])
+  }, []);
 
   // Function to handle optimization
   async function handleOptimizeSubmit() {
