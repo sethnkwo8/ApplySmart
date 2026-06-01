@@ -127,56 +127,75 @@ export async function createOptimizationReport(input: IReportInput) {
         ];
 
         // Deduplicate and normalize to lowercase to match seeds
-        const uniqueSkillNames = Array.from(
-            new Set(rawSkillNames.map(name => name.trim().toLowerCase()))
-        );
+        const uniqueSkillQueries = Array.from(new Set(rawSkillNames));
 
         // Ger matching seeded documentation records
-        const dbSkills = await Skill.find({ name: { $in: uniqueSkillNames } });
+        const dbSkills = await Skill.find({
+            $or: [
+                { name: { $in: uniqueSkillQueries } },
+                { aliases: { $in: uniqueSkillQueries } }
+            ]
+        });
 
         // Build a dictionary lookup map
-        const skillLookupMap = new Map(
-            dbSkills.map(skill => [skill.name.toLowerCase().trim(), skill])
-        );
+        const skillLookupMap = new Map();
+        dbSkills.forEach(skill => {
+            // Register primary name entry
+            skillLookupMap.set(skill.name.toLowerCase().trim(), skill);
+            
+            // Register aliases entries so they resolve to the exact same parent document IDs and resources
+            if (skill.aliases && Array.isArray(skill.aliases)) {
+                skill.aliases.forEach((alias: string) => {
+                    skillLookupMap.set(alias.toLowerCase().trim(), skill);
+                });
+            }
+        });
 
         // Map the MongoDB ObjectIds directly onto the Gemini schema arrays
         const mappedDetectedSkills = aiResult.detectedSkills.map((skill: any) => {
-            const dbMatch = skillLookupMap.get(skill.skillName.toLowerCase());
+            const dbMatch = skillLookupMap.get(skill.skillName.toLowerCase().trim());
             return {
                 skillName: skill.skillName,
                 importanceWeight: skill.importanceWeight,
                 foundInCv: skill.foundInCv,
                 suggestionText: skill.suggestionText,
-                skillId: dbMatch ? dbMatch._id : undefined // Get the ID from the full object
+                skillId: dbMatch ? dbMatch._id : undefined 
             };
         });
 
         const mappedMissingSkills = aiResult.missingSkills.map((skill: any) => {
-            const dbMatch = skillLookupMap.get(skill.skillName.toLowerCase());
+            const dbMatch = skillLookupMap.get(skill.skillName.toLowerCase().trim());
             return {
                 skillName: skill.skillName,
                 importanceWeight: skill.importanceWeight,
                 foundInCv: skill.foundInCv,
                 suggestionText: skill.suggestionText,
-                skillId: dbMatch ? dbMatch._id : undefined // Get the ID from the full object
+                skillId: dbMatch ? dbMatch._id : undefined 
             };
         });
 
         // Get learning resources or missing skills
         const aggregatedLearningResources = aiResult.missingSkills
         .map((skill: any) => {
-            const dbMatch = skillLookupMap.get(skill.skillName.toLowerCase());
+            // Look up the skill in mapped dictionary using its name
+            const dbMatch = skillLookupMap.get(skill.skillName.toLowerCase().trim());
             
+            // Condition A: It matched a database entry AND that entry has resources
             if (dbMatch && dbMatch.learningResources && dbMatch.learningResources.length > 0) {
                 return {
-                    skillName: dbMatch.name, 
+                    skillName: dbMatch.name, // Returns standard seed name (e.g., "react")
                     resources: dbMatch.learningResources.map((res: any) => ({
                         title: res.title,
                         url: res.url
                     }))
                 };
             }
-            return null;
+            
+            // If the skill isn't in our database yet return a valid empty object structure
+            return {
+                skillName: skill.skillName, 
+                resources: []
+            };
         })
         .filter((item): item is NonNullable<typeof item> => item !== null);
 
