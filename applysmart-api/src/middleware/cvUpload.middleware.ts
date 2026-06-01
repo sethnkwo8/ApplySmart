@@ -12,7 +12,7 @@ export const cvUploadMiddleware = multer({
     // File size limit
     limits: {fileSize: MAX_FILE_SIZE_BYTES},
     // callback hook that executes before file bytes are even written to server's memory
-    fileFilter(req, file, callback) {
+    fileFilter(req: any, file: any, callback: any) {
         // If file type sent in headers is in specified allowed types
         if (isValidMimeType(file.mimetype)) {
             callback(null, true) // Accept the file

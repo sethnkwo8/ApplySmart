@@ -197,7 +197,7 @@ export async function createOptimizationReport(input: IReportInput) {
                 resources: []
             };
         })
-        .filter((item): item is NonNullable<typeof item> => item !== null);
+        .filter((item: any): item is NonNullable<typeof item> => item !== null);
 
         // Calculate total execution processing duration
         const processingTimeMs = Date.now() - startTime;
