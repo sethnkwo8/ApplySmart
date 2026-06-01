@@ -71,3 +71,14 @@ export async function getDashboardData(userId: string, page: number = 1, limit: 
         }
     };
 }
+
+// Get single optimization data for dashboard
+export async function getSingleData(id: string) {
+    const optimization = await Optimization.findById(id).lean();
+
+    if (!optimization) {
+        throw new AppError("Record not found", 404)
+    }
+
+    return optimization
+}
