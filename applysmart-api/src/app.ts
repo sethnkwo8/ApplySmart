@@ -6,6 +6,7 @@ import rateLimit from "express-rate-limit";
 import { env } from "./config/env.js";
 import authRoutes from "./routes/auth.route.js";
 import optimizeRoutes from "./routes/optimize.routes.js";
+import dashboardRoutes from "./routes/dashboard.route.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 import cookieParser from "cookie-parser";
 
@@ -48,6 +49,9 @@ app.use("/auth", authRoutes)
 
 // Optimize routes
 app.use("/optimize", optimizeRoutes)
+
+// Dashboard routes
+app.use("/dashboard", dashboardRoutes)
 
 // Error handler
 app.use(errorHandler)
