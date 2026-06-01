@@ -133,7 +133,7 @@ export function Dashboard() {
                         history.map((entry) => (
                             <button
                             key={entry.id}
-                            // onClick={() => handleViewHistory(entry)}
+                            onClick={() => router.push(`/results/${entry.id}`)}
                             className="w-full p-5 hover:bg-muted/30 transition-colors duration-150 text-left group"
                             >
                             <div className="flex items-start justify-between gap-4">
