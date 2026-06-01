@@ -5,7 +5,7 @@ import { Metadata } from "next"
 export const metadata: Metadata = {
     title: {
         template: "%s || ApplySmart", // %s is used as a placeholder
-        default: "Dashboard || ApplySmart",
+        default: "Analytics || ApplySmart",
     },
     description: "Your centralized workspace for AI-powered resume parsing, historical ATS matching analytics, and personalized technical skill roadmaps.",
 }
