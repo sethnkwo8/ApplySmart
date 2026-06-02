@@ -24,7 +24,6 @@ export default function SingleOptimizationResults() {
                 setLoading(true);
                 setError(null);
                 const response = await fetchSingleDashboardData(historyId);
-                console.log("PRODUCTION DATA RECEIVED:", response.data);
                 setData(response.data); // This populates your UI with the historical text/score!
             } catch (err) {
                 console.error("Failed to load history item:", err);
@@ -49,7 +48,7 @@ export default function SingleOptimizationResults() {
     }
 
     // Error feedback layer
-    if (error || !data || !data.matchScore || data.matchScore === 0) {
+    if (error || !data || !data.atsScore || data.atsScore === 0) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4 max-w-md mx-auto">
                 <div className="w-12 h-12 rounded-full bg-rose-500/10 flex items-center justify-center mb-4 text-rose-400">
