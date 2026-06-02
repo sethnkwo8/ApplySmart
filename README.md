@@ -13,6 +13,12 @@ The platform analyzes uploaded resumes against job listings, identifies keyword 
 
 ---
 
+## YouTube Demo
+
+*   **Demo Video Link:** [youtu.be/6wpkJ0VUyKM](https://youtu.be/6wpkJ0VUyKM)
+
+---
+
 ## 🌐 Architectural Vision
 
 Modern Applicant Tracking Systems filter out highly qualified candidates due to rigid keyword constraints. ApplySmart bridges this gap by turning the resume optimization lifecycle into an automated pipeline using:
