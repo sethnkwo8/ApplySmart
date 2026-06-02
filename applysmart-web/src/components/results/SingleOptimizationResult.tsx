@@ -24,6 +24,7 @@ export default function SingleOptimizationResults() {
                 setLoading(true);
                 setError(null);
                 const response = await fetchSingleDashboardData(historyId);
+                console.log("PRODUCTION DATA RECEIVED:", response.data);
                 setData(response.data); // This populates your UI with the historical text/score!
             } catch (err) {
                 console.error("Failed to load history item:", err);
