@@ -1,29 +1,25 @@
 # 🚀 ApplySmart
 
-ApplySmart is an AI-powered resume optimization platform designed to help job seekers tailor their CVs to specific job descriptions, improve ATS compatibility, and increase interview chances through intelligent resume analysis and optimization.
+ApplySmart is an enterprise-grade, AI-powered resume optimization platform engineered to help job seekers reverse-engineer Applicant Tracking Systems (ATS). By cross-referencing resumes against target job descriptions in real time, the platform identifies semantic keyword gaps, evaluates suitability scores, and delivers context-aware, schema-constrained architectural rewrites alongside custom-mapped learning pathways.
 
 The platform analyzes uploaded resumes against job listings, identifies keyword gaps, evaluates ATS match quality, and provides AI-assisted improvements to help users create stronger applications.
 
 ---
 
-## 🌍 Live Frontend Preview
+## 🌍 Live Production Environments
 
-🚀 https://apply-smart-six.vercel.app
-
-> Backend AI optimization pipeline is currently under active development.
+*   **Production Application:** [applysmart.sethnkwo.space](https://applysmart.sethnkwo.space)
+*   **Production API Gateway:** [api.applysmart.sethnkwo.space](https://api.applysmart.sethnkwo.space)
 
 ---
 
-## 🌐 Vision
+## 🌐 Architectural Vision
 
-Modern hiring systems rely heavily on Applicant Tracking Systems (ATS), making it difficult for qualified candidates to get noticed.
-
-ApplySmart aims to bridge this gap by combining:
-- Context-aware, schema-constrained AI resume analysis
-- Dynamic ATS suitability assessment metrics
-- In-memory dictionary skill classification with priority weighting
-- Tailored training path aggregation to automatically resolve detected skill gaps
-- Clean, secure, and modern SaaS-style user environments
+Modern Applicant Tracking Systems filter out highly qualified candidates due to rigid keyword constraints. ApplySmart bridges this gap by turning the resume optimization lifecycle into an automated pipeline using:
+*   **Schema-Enforced LLM Orchestration:** Low-latency, JSON-constrained text transformation loops directly integrated into an Express workflow.
+*   **Deterministic Skill Ingestion:** Combining AI-driven entity extraction with fast, in-memory dictionary matrices.
+*   **Automated Skill Gap Resolution:** Dynamically linking missing tech stack requirements to curated, live seed documentation paths.
+*   **Production-Grade IAM:** Cross-provider session isolation defending against common web vulnerability vectors.
 
 ---
 
@@ -90,7 +86,7 @@ const aiOptimizationLimiter = rateLimit({
 });
 ```
 
-- Why it's structured this way: Traditional IP limits risk blocking multiple distinct users inside identical corporate or public local networks. By configuring a fallback parameter that keys off validated MongoDB user identity objects (req.user.userId) first before reverting to incoming network routing strings, the system guarantees accurate user throttle metrics without cross-user disruption.
+- Why it's engineered this way: Standard IP-based rate limiting risks blocking multiple distinct users operating inside shared corporate networks, universities, or public VPN gateways. By configuring a key generator that prioritizes validated MongoDB user object IDs (req.user.userId) and falling back to network routing strings only for unauthenticated endpoints, the system enforces accurate user throttling without cross-user disruption.
 
 ---
 
@@ -217,7 +213,7 @@ This structure improves scalability, maintainability, and deployment flexibility
 
 ---
 
-## 🏗 Architecture Overview
+## 🏗 Technical Architecture Overview
 
 ApplySmart follows a modular full-stack architecture:
 
@@ -286,12 +282,7 @@ This structure enables:
 
 ## 📌 Planned Features
 
-- ✍️ AI Resume Rewriting
-- 📊 Resume Analytics Dashboard
-- 🔍 Skill Gap Detection
 - 💳 Payment Integration
-- 👤 User Dashboard
-- 📂 Resume History
 - 🐳 Docker Support
 - ⚙️ CI/CD Pipeline
 
@@ -403,7 +394,7 @@ ApplySmart implements several production-style security practices:
 
 ## 📬 Contact
 
-- Portfolio: https://seth-nkwo.vercel.app
+- Portfolio: https://www.sethnkwo.space
 - LinkedIn: https://www.linkedin.com/in/seth-nkwo/
 - GitHub: https://github.com/sethnkwo8
 
