@@ -60,9 +60,14 @@ Below are key screenshots showcasing the main features of ApplySmart:
 |---------|------------|-------------|
 | Landing Page | ![landing-page](screenshots/landing-page.png) | ApplySmart Landing Page (Logged in). |
 | Landing Page 2 | ![landing-page](screenshots/landing-page-2.png) | ApplySmart Landing Page. |
-| Optimization Tool | ![onboarding-1](screenshots/optimization-tool.png) | Main Optimization Tool. |
+| Optimization Tool | ![optimization-tool](screenshots/optimization-tool.png) | Main Optimization Tool. |
 | Sign Up | ![register](screenshots/signup-page.png) | ApplySmart Sign Up Page. |
 | Sign In | ![login](screenshots/sign-in-page.png) | ApplySmart Sign In Page. |
+| Dashboard | ![dashboard](screenshots/dashboard.png) | ApplySmart Dashboard. |
+| Optimizing Screen | ![optimizing-screen](screenshots/optimizing.png) | ApplySmart Optimizing Screen. |
+| Analysis Page | ![analysis](screenshots/analysis-page.png) | ApplySmart Analysis Page. |
+| Learning Resources Section | ![learning-resource](screenshots/learning-resources.png) | ApplySmart Learning Resources Section. |
+| Live CV Preview & Missing Skills | ![live-cv-preview-missing-skills](screenshots/live-preview-missing-skills.png) | ApplySmart Live CV Preview and Missing Skills Section. |
 
 ---
 
