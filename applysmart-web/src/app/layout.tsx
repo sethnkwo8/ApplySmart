@@ -9,6 +9,13 @@ export const metadata: Metadata = {
   title: "ApplySmart - AI Resume & ATS Optimization Tool",
   description:
   "Optimize your resume for ATS systems and job descriptions using AI-powered keyword analysis and CV scoring.",
+  icons: {
+    icon: [
+      { url: '/favicon.png' },
+      { url: '/favicon.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: { url: '/apple-touch-icon.png' },
+  },
 };
 
 export default function RootLayout({
