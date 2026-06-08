@@ -220,7 +220,7 @@ This structure improves scalability, maintainability, and deployment flexibility
 | **Validation & Uploads** | Zod, Multer |
 | **Parsing Engines** | pdf-parse, mammoth |
 | **AI Integration** | Google Gemini API Framework (gemini-2.5-flash engine) |
-| **Deployment** | Vercel *(frontend deployed)* / Render *(planned)* |
+| **DevOps & Infrastructure** | Docker, Docker Compose, Vercel *(frontend deployed)* / Render *(planned)* |
 
 ---
 
@@ -294,8 +294,31 @@ This structure enables:
 ## 📌 Planned Features
 
 - 💳 Payment Integration
-- 🐳 Docker Support
 - ⚙️ CI/CD Pipeline
+
+---
+
+## 🚀 Quickstart with Docker (Recommended)
+
+You can launch the decoupled ApplySmart ecosystem (both frontend interface and API gateway) using Docker Compose to orchestrate local infrastructure.
+
+**Prerequisites:** Make sure you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running.
+
+**Step 1 - Clone the repository**
+```bash
+git clone [https://github.com/sethnkwo8/ApplySmart.git](https://github.com/sethnkwo8/ApplySmart.git)
+```
+
+**Step 2 - Configure Environment Variables**
+Verify your configurations match the environment layout provided below inside the respective applysmart-web/ and applysmart-api/ folders.
+
+**Step 3 - Spin up the container network**
+```bash
+docker compose up -d
+```
+
+- Frontend Application Interface: http://localhost:3000
+- Backend Gateway Services: http://localhost:5000
 
 ---
 
