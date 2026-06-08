@@ -1,0 +1,26 @@
+services:
+  # This is the name of our service wrapper
+  backend: 
+    # Tell Compose to build the image with the Dockerfile in your folder
+    build: 
+      context: ./applysmart-api
+      dockerfile: Dockerfile
+    # Give the container an explicit name
+    container_name: applysmart-backend-compose
+    # Map the ports (Mac Port: Container Port)
+    ports:
+      - "5000:5000"
+    # Mirror the hot-reload bind mounts we perfected yesterday
+    volumes:
+      - ./applysmart-api:/app
+      - /app/node_modules
+  frontend:
+    build: 
+      context: ./applysmart-web
+      dockerfile: Dockerfile
+    container_name: applysmart-compose-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./applysmart-web:/app
+      - /app/node_modules
